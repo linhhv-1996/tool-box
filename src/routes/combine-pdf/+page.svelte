@@ -80,7 +80,7 @@
   <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
 </svelte:head>
 
-<div class="max-w-4xl mx-auto px-4 py-12">
+<div class="max-w-[980px] mx-auto px-5 py-12">
   <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
   <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
