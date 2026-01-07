@@ -127,7 +127,7 @@
                         {/if}
                     </button>
                 </div>
-                <p class="mt-3 text-[10px] text-slate-400 font-mono italic text-center md:text-left">
+                <p class="mt-3 text-[10px] text-slate-400 font-mono text-center md:text-left">
                     This password will be required to open the PDF.
                 </p>
             </div>
