@@ -78,21 +78,31 @@
           <button onclick={() => {files = []; mergedUrl = null;}} class="text-[10px] font-mono uppercase hover:text-black cursor-pointer underline underline-offset-4 decoration-slate-200">Clear All</button>
         </div>
 
-        <ul class="divide-y divide-slate-50 mb-10 max-h-100 overflow-y-auto pr-2 custom-scrollbar">
-          {#each files as file, i}
+        <ul class="divide-y divide-slate-50 mb-10 max-h-100 overflow-y-auto pr-2 custom-scrollbar font-mono">
+        {#each files as file, i}
             <li class="py-3 flex justify-between items-center gap-4 group">
-              <div class="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                <span class="font-mono text-[10px] text-slate-300 shrink-0">{(i+1).toString().padStart(2,'0')}</span>
-                <span class="text-sm font-medium text-[#1a1a1a] truncate shrink grow">
-                  {file.name}
+            <div class="flex items-center gap-3 min-w-0 flex-1 pr-2">
+                <span class="text-[10px] text-slate-300 shrink-0">
+                {(i+1).toString().padStart(2,'0')}
                 </span>
-                <span class="font-mono text-[9px] text-slate-400 uppercase italic shrink-0 bg-slate-50 px-1.5 py-0.5 rounded-sm">
-                  {formatBytes(file.size)}
+
+                <span class="text-[12px] text-[#1a1a1a] truncate shrink grow tracking-tighter">
+                {file.name}
                 </span>
-              </div>
-              <button onclick={() => {files = files.filter((_, idx) => idx !== i); mergedUrl = null;}} class="text-slate-300 hover:text-red-500 p-1 cursor-pointer transition-colors shrink-0">✕</button>
+
+                <span class="text-[9px] text-slate-400 uppercase shrink-0 bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100">
+                {formatBytes(file.size)}
+                </span>
+            </div>
+            
+            <button 
+                onclick={() => {files = files.filter((_, idx) => idx !== i); mergedUrl = null;}} 
+                class="text-slate-300 hover:text-black p-1 cursor-pointer transition-colors shrink-0"
+            >
+                ✕
+            </button>
             </li>
-          {/each}
+        {/each}
         </ul>
 
         <button 

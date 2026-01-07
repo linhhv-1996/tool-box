@@ -27,6 +27,7 @@
 		"vite": "^7.2.6"
 	},
 	"dependencies": {
+		"jszip": "^3.10.1",
 		"lucide-svelte": "^0.562.0",
 		"pdf-lib": "^1.17.1"
 	}
