@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Định nghĩa theme trực tiếp tại đây */
+@theme {
+  /* Font chữ */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Custom Max-width cho container 900px của ông */
+  --spacing-max-4xl: 900px;
+}
+
+/* Các tùy chỉnh global khác */
+@layer base {
+  body {
+    @apply antialiased text-[#1a1a1a] bg-white;
+  }
+}
+
+/* Hiệu ứng bôi đen văn bản */
+::selection {
+  background-color: #fef08a;
+}
