@@ -17,6 +17,12 @@ export const categories: Category[] = [
     id: "01",
     title: "PDF Utilities",
     tools: [
+        { 
+  id: "image-to-pdf", 
+  name: "Image to PDF", 
+  desc: "Convert and reorder images into a single PDF document.", 
+  href: "/image-to-pdf" 
+},
         { id: "combine-pdf", name: "Combine PDF Files", desc: "Merge multiple PDF documents into one.", href: "/combine-pdf" },
         { id: "split-pdf", name: "Split PDF", desc: "Extract or split pages from a PDF file.", href: "/split-pdf" },
         { id: "unlock-pdf", name: "Unlock PDF", desc: "Remove password protection from PDFs locally.", href: "/unlock-pdf" },

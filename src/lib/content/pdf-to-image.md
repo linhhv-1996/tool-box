@@ -4,10 +4,10 @@ Easily transform your PDF pages into crisp PNG or JPG images. Our tool renders e
 
 ## How to convert PDF to Image locally?
 
-1.  **Select your PDF**: Click the dropzone or drag and drop your file.
-2.  **Choose format**: Select between PNG (lossless) or JPEG.
-3.  **Adjust quality**: Choose the scale (2x is recommended for best clarity).
-4.  **Convert & Download**: Click the button to render. You can download individual pages or get everything in a single ZIP file.
+*  **Select your PDF**: Click the dropzone or drag and drop your file.
+*  **Choose format**: Select between PNG (lossless) or JPEG.
+*  **Adjust quality**: Choose the scale (2x is recommended for best clarity).
+*  **Convert & Download**: Click the button to render. You can download individual pages or get everything in a single ZIP file.
 
 ## Why use our local converter?
 
