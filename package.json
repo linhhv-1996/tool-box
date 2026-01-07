@@ -18,11 +18,16 @@
 		"@tailwindcss/postcss": "^4.1.18",
 		"@tailwindcss/vite": "^4.1.18",
 		"autoprefixer": "^10.4.23",
+		"mdsvex": "^0.12.6",
 		"postcss": "^8.5.6",
 		"svelte": "^5.45.6",
 		"svelte-check": "^4.3.4",
 		"tailwindcss": "^4.1.18",
 		"typescript": "^5.9.3",
 		"vite": "^7.2.6"
+	},
+	"dependencies": {
+		"lucide-svelte": "^0.562.0",
+		"pdf-lib": "^1.17.1"
 	}
 }

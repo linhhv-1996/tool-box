@@ -1,45 +1,5 @@
 <script>
-  const categories = [
-    {
-      id: "01",
-      title: "PDF Utilities",
-      tools: [
-        { name: "Combine PDF Files", desc: "Merge multiple PDF documents into one.", href: "/combine-pdf" },
-        { name: "Split PDF", desc: "Extract or split pages from a PDF file.", href: "/split-pdf" },
-        { name: "Unlock PDF", desc: "Remove password protection from PDFs locally.", href: "/unlock-pdf" },
-        { name: "Protect PDF", desc: "Add a password to secure your documents.", href: "/protect-pdf" },
-        { name: "PDF to Image", desc: "Convert PDF pages into JPG or PNG images.", href: "/pdf-to-image" }
-      ]
-    },
-    {
-      id: "02",
-      title: "Photo & Media",
-      tools: [
-        { name: "Remove Background", desc: "Automatically remove image backgrounds in-browser.", href: "/remove-background" },
-        { name: "iPhone Photo Converter", desc: "Convert HEIC photos to standard JPG format.", href: "/heic-to-jpg" },
-        { name: "Shrink Image Size", desc: "Compress images while preserving visual quality.", href: "/shrink-images" },
-        { name: "Social Media Resizer", desc: "Resize images for Instagram, YouTube, and TikTok.", href: "/social-media-resizer" },
-        { name: "Video to GIF", desc: "Turn short video clips into animated GIFs.", href: "/video-to-gif" }
-      ]
-    },
-    {
-      id: "03",
-      title: "Productivity",
-      tools: [
-        { name: "Copy Text from Image", desc: "Extract text from photos and scanned documents.", href: "/copy-text-from-image" },
-        { name: "Excel to PDF", desc: "Convert Excel spreadsheets into printable PDFs.", href: "/excel-to-pdf" },
-        { name: "Spreadsheet to JSON", desc: "Transform spreadsheet data into JSON format.", href: "/spreadsheet-to-json" }
-      ]
-    },
-    {
-      id: "04",
-      title: "Security & Others",
-      tools: [
-        { name: "Secure Password Generator", desc: "Generate strong passwords using your device only.", href: "/secure-password-generator" },
-        { name: "Private QR Generator", desc: "Create QR codes without tracking or data sharing.", href: "/private-qr-generator" }
-      ]
-    }
-  ];
+    import { categories } from "$lib/config/tools";
 </script>
 
 <div class="max-w-4xl mx-auto px-4 py-12">
