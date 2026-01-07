@@ -120,6 +120,15 @@
       isProcessing = false;
     }
   }
+
+  function reset() {
+    images = [];
+    pdfUrl = null;
+    resultSize = 0;
+    errorMessage = null;
+  }
+
+
 </script>
 
 <svelte:head>
@@ -199,12 +208,16 @@
 
         {#if pdfUrl && !isProcessing && resultSize > 0}
           <SuccessState 
-            url={pdfUrl} 
-            fileName={resultFileName} 
-            fileSize={resultSize}
+            type="file"
             title="PDF Ready" 
             subTitle="{images.length} images merged successfully" 
-          />
+            file={{ 
+            name: resultFileName, 
+            size: resultSize, 
+            url: pdfUrl 
+            }}
+            onReset={reset}
+        />
         {/if}
       </div>
     {/if}
@@ -225,7 +238,7 @@
       {/each}
     </div>
   </div>
-  
+
 </div>
 
 <style>
