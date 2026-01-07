@@ -225,7 +225,7 @@
           {#each related as r}
             <a href={r.href} class="group block">
               <span class="font-bold block group-hover:underline text-[#1a1a1a] transition-all underline-offset-2 leading-tight">{r.name}</span>
-              <span class="text-[11px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
+              <span class="text-[10px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
             </a>
           {/each}
         </div>

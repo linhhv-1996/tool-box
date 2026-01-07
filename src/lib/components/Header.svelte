@@ -1,4 +1,4 @@
-<header class="max-w-[980px] mx-auto px-4 py-8 md:py-12 flex flex-col items-start gap-6 md:flex-row md:justify-between md:items-end border-b border-slate-100 w-full">
+<header class="max-w-[980px] mx-auto px-5 py-8 md:py-12 flex flex-col items-start gap-6 md:flex-row md:justify-between md:items-end border-b border-slate-100 w-full">
   <div>
     <a href="/" class="text-2xl font-bold tracking-tighter font-mono hover:opacity-80 transition-opacity flex items-center">
       LOCALTOOLS<span class="blink ml-0.5">_</span>
