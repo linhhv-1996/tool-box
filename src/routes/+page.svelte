@@ -2,7 +2,7 @@
     import { categories } from "$lib/config/tools";
 </script>
 
-<div class="max-w-4xl mx-auto px-4 py-12">
+<div class="max-w-[980px] mx-auto px-5 py-12">
   <section class="mb-20">
     <h2 class="text-2xl leading-snug max-w-2xl font-semibold tracking-tight">
       Stop uploading your private files to random servers. 

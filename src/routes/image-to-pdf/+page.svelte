@@ -9,6 +9,7 @@
   import SuccessState from '$lib/components/SuccessState.svelte';
   import Content from '$lib/content/image-to-pdf.md';
 
+  // --- LOGIC GIỮ NGUYÊN ---
   const toolInfo = allTools.find((t) => t.id === 'image-to-pdf')!;
   const related = allTools.filter((t) => t.id !== 'image-to-pdf').slice(0, 6);
 
@@ -50,7 +51,6 @@
     resultSize = 0;
   }
 
-  // Convert mọi định dạng ảnh (WebP, GIF, etc.) sang JPG qua Canvas
   async function imageToJpgBytes(file) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -75,12 +75,10 @@
     if (images.length === 0) return;
     isProcessing = true;
     errorMessage = null;
-    pdfUrl = null; // Reset URL cũ để kích hoạt lại animation Success
+    pdfUrl = null; 
     resultSize = 0;
-    
     try {
       const pdfDoc = await PDFDocument.create();
-      
       for (const item of images) {
         const jpgArrayBuffer = await imageToJpgBytes(item.file);
         const img = await pdfDoc.embedJpg(jpgArrayBuffer);
@@ -102,17 +100,11 @@
           page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
         }
       }
-
       const pdfBytes = await pdfDoc.save();
-      
-      // QUAN TRỌNG: Cập nhật size trước
       resultSize = pdfBytes.length;
       resultFileName = `JustLocalTools_${Date.now()}.pdf`;
-
-      // Sau đó mới tạo URL để hiện SuccessState
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       pdfUrl = URL.createObjectURL(blob);
-      
     } catch (e) {
       console.error(e);
       errorMessage = "Error converting images. Please try again.";
@@ -127,118 +119,120 @@
     resultSize = 0;
     errorMessage = null;
   }
-
-
 </script>
 
 <svelte:head>
   <title>{toolInfo.name} | JustLocalTools</title>
 </svelte:head>
 
-<div class="max-w-4xl mx-auto px-4 py-12">
-  <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
+<div class="max-w-[980px] mx-auto px-5 py-12">
+  <div class="flex flex-col lg:flex-row gap-8">
+    
+    <div class="w-full lg:w-[640px] shrink-0">
+      <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
-  <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
-    <Dropzone onfiles={handleFiles} multiple={true} accept="image/*" />
+      <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
+        <Dropzone onfiles={handleFiles} multiple={true} accept="image/*" />
 
-    {#if images.length > 0}
-      <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
-        <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
-          <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
-            Workspace ({images.length} images - Drag to reorder)
-          </span>
-          <button onclick={() => {images = []; pdfUrl = null; resultSize = 0;}} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">
-            Clear all
-          </button>
-        </div>
+        {#if images.length > 0}
+          <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
+            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
+              <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
+                Workspace ({images.length} images - Drag to reorder)
+              </span>
+              <button onclick={() => {images = []; pdfUrl = null; resultSize = 0;}} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">
+                Clear all
+              </button>
+            </div>
 
-        <div class="w-full overflow-x-auto pb-4 mb-8 custom-scrollbar bg-slate-50 border border-slate-200 p-4 rounded-sm">
-            <div class="flex flex-nowrap gap-4 min-w-max">
-                {#each images as img, i (img.id)}
-                <div 
-                    draggable="true"
-                    ondragstart={() => onDragStart(i)}
-                    ondragover={(e) => onDragOver(e, i)}
-                    ondragend={() => draggedIndex = null}
-                    class="relative flex-shrink-0 group cursor-grab active:cursor-grabbing transition-all {draggedIndex === i ? 'opacity-20 scale-95' : 'opacity-100'}"
-                >
-                    <div class="h-[90px] w-[90px] bg-white border border-slate-200 overflow-hidden relative shadow-sm group-hover:border-black transition-all">
-                        <img src={img.preview} alt="" class="h-full w-full object-cover pointer-events-none" />
-                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] font-mono py-1 text-center leading-none">{i + 1}</div>
-                        <button onclick={() => remove(i)} class="absolute top-0 right-0 p-1.5 bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Trash2 size={12}/>
-                        </button>
+            <div class="w-full overflow-x-auto pb-4 mb-8 custom-scrollbar bg-slate-50 border border-slate-200 p-4 rounded-sm">
+                <div class="flex flex-nowrap gap-4 min-w-max">
+                    {#each images as img, i (img.id)}
+                    <div 
+                        draggable="true"
+                        ondragstart={() => onDragStart(i)}
+                        ondragover={(e) => onDragOver(e, i)}
+                        ondragend={() => draggedIndex = null}
+                        class="relative flex-shrink-0 group cursor-grab active:cursor-grabbing transition-all {draggedIndex === i ? 'opacity-20 scale-95' : 'opacity-100'}"
+                    >
+                        <div class="h-[90px] w-[90px] bg-white border border-slate-200 overflow-hidden relative shadow-sm group-hover:border-black transition-all">
+                            <img src={img.preview} alt="" class="h-full w-full object-cover pointer-events-none" />
+                            <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] font-mono py-1 text-center leading-none">{i + 1}</div>
+                            <button onclick={() => remove(i)} class="absolute top-0 right-0 p-1.5 bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Trash2 size={12}/>
+                            </button>
+                        </div>
+                    </div>
+                    {/each}
+                    <div class="h-[90px] w-12 flex-shrink-0 border border-dashed border-slate-200 flex items-center justify-center text-slate-300">
+                        <GripHorizontal size={20} />
                     </div>
                 </div>
-                {/each}
-                <div class="h-[90px] w-12 flex-shrink-0 border border-dashed border-slate-200 flex items-center justify-center text-slate-300">
-                    <GripHorizontal size={20} />
+            </div>
+
+            <div class="flex flex-wrap gap-6 mb-8 p-5 bg-slate-50/50 border border-slate-100 rounded-sm">
+                <div class="flex items-center gap-2 mr-2">
+                    <Settings2 size={14} class="text-slate-400" />
+                    <span class="font-mono text-[10px] font-bold uppercase text-slate-500">Page Layout:</span>
                 </div>
+                <label class="flex items-center gap-2 cursor-pointer group">
+                    <input type="radio" bind:group={pageSize} value="original" class="w-3 h-3 accent-black" />
+                    <span class="text-[11px] font-mono uppercase group-hover:text-black transition-colors">Original Size</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer group">
+                    <input type="radio" bind:group={pageSize} value="a4" class="w-3 h-3 accent-black" />
+                    <span class="text-[11px] font-mono uppercase group-hover:text-black transition-colors">Fit to A4</span>
+                </label>
             </div>
-        </div>
 
-        <div class="flex flex-wrap gap-6 mb-8 p-5 bg-slate-50/50 border border-slate-100 rounded-sm">
-            <div class="flex items-center gap-2 mr-2">
-                <Settings2 size={14} class="text-slate-400" />
-                <span class="font-mono text-[10px] font-bold uppercase text-slate-500">Page Layout:</span>
-            </div>
-            <label class="flex items-center gap-2 cursor-pointer group">
-                <input type="radio" bind:group={pageSize} value="original" class="w-3 h-3 accent-black" />
-                <span class="text-[11px] font-mono uppercase group-hover:text-black transition-colors">Original Size</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer group">
-                <input type="radio" bind:group={pageSize} value="a4" class="w-3 h-3 accent-black" />
-                <span class="text-[11px] font-mono uppercase group-hover:text-black transition-colors">Fit to A4</span>
-            </label>
-        </div>
+            <button 
+              onclick={convertToPdf} 
+              disabled={isProcessing} 
+              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
+            >
+              {#if isProcessing} <Loader2 class="animate-spin mr-2" size={16} /> Processing... {:else} Convert to PDF {/if}
+            </button>
 
-        <button 
-          onclick={convertToPdf} 
-          disabled={isProcessing} 
-          class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
-        >
-          {#if isProcessing} <Loader2 class="animate-spin mr-2" size={16} /> Processing... {:else} Convert to PDF {/if}
-        </button>
+            {#if errorMessage}
+              <div class="mt-4 p-4 bg-red-50 border border-red-100 text-red-600 text-[12px] flex items-center gap-3 font-mono uppercase font-bold">
+                <AlertCircle size={16} /> {errorMessage}
+              </div>
+            {/if}
 
-        {#if errorMessage}
-          <div class="mt-4 p-4 bg-red-50 border border-red-100 text-red-600 text-[12px] flex items-center gap-3 font-mono uppercase font-bold">
-            <AlertCircle size={16} /> {errorMessage}
+            {#if pdfUrl && !isProcessing && resultSize > 0}
+              <SuccessState 
+                type="file"
+                title="PDF Ready" 
+                subTitle="{images.length} images merged successfully" 
+                file={{ name: resultFileName, size: resultSize, url: pdfUrl }}
+                onReset={reset}
+              />
+            {/if}
           </div>
         {/if}
-
-        {#if pdfUrl && !isProcessing && resultSize > 0}
-          <SuccessState 
-            type="file"
-            title="PDF Ready" 
-            subTitle="{images.length} images merged successfully" 
-            file={{ 
-            name: resultFileName, 
-            size: resultSize, 
-            url: pdfUrl 
-            }}
-            onReset={reset}
-        />
-        {/if}
       </div>
-    {/if}
-  </div>
 
-  <article class="prose mt-24 border-t border-slate-100 pt-16 mx-auto">
-    <Content />
-  </article>
-
-  <div class="mt-24 border-t border-slate-100 pt-16 pb-20">
-    <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-10 pb-2 border-b border-slate-50">Related Tools</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-      {#each related as r}
-        <a href={r.href} class="group block">
-          <span class="font-bold block group-hover:underline text-[#1a1a1a] transition-all underline-offset-2">{r.name}</span>
-          <span class="text-[11px] text-slate-400 font-mono uppercase mt-0.5 block">{r.desc}</span>
-        </a>
-      {/each}
+      <article class="prose mt-16 border-t border-slate-100 pt-12">
+        <Content />
+      </article>
     </div>
-  </div>
 
+    <aside class="w-full lg:w-[310px] shrink-0">
+     
+      <div class="sticky top-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 pb-2 border-b border-slate-100">Related Tools</h3>
+        <div class="flex flex-col gap-y-6">
+          {#each related as r}
+            <a href={r.href} class="group block">
+              <span class="font-bold block group-hover:underline text-[#1a1a1a] transition-all underline-offset-2 leading-tight">{r.name}</span>
+              <span class="text-[11px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
+            </a>
+          {/each}
+        </div>
+      </div>
+    </aside>
+
+  </div>
 </div>
 
 <style>

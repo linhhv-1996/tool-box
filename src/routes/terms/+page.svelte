@@ -2,7 +2,7 @@
   <title>Terms of Service | LOCALTOOLS_</title>
 </svelte:head>
 
-<div class="max-w-4xl mx-auto px-4 py-16">
+<div class="max-w-[980px] mx-auto px-4 py-16">
   <div class="mb-12 pb-8">
     <h1 class="text-xl font-bold tracking-tighter font-mono uppercase text-[#1a1a1a]">
       Terms of Service

@@ -7,7 +7,7 @@
   <meta name="description" content="Learn how our 100% client-side processing keeps your files safe." />
 </svelte:head>
 
-<div class="max-w-4xl mx-auto px-4 py-16">
+<div class="max-w-[980px] mx-auto px-4 py-16">
   <div class="mb-16 pb-8">
      <h1 class="text-xl font-bold tracking-tighter font-mono uppercase text-[#1a1a1a]">
       How it works

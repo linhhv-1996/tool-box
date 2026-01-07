@@ -4,7 +4,7 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
-  --spacing-max-4xl: 900px; /* Định nghĩa chiều rộng site của ông */
+  --width-4xl: 980px; /* Định nghĩa chiều rộng site của ông */
 }
 
 /* 2. BASE STYLES */
