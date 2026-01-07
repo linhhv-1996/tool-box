@@ -1,9 +1,10 @@
 <script lang="ts">
-    // @ts-nocheck
+  // @ts-nocheck
   import { PDFDocument } from 'pdf-lib';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
+  import SuccessState from '$lib/components/SuccessState.svelte'; //
   // @ts-ignore
   import Content from '$lib/content/combine-pdf.md';
 
@@ -33,10 +34,15 @@
   }
 
   async function mergeAction() {
-    if (files.length < 2) { error = "Select at least 2 files."; return; }
+    if (files.length < 2) { 
+      error = "Select at least 2 files.";
+      return; 
+    }
     isProcessing = true;
     error = "";
-    
+    mergedUrl = null; // Reset để ẩn SuccessState cũ nếu có
+    mergedSize = 0;
+
     try {
       const mergedPdf = await PDFDocument.create();
       for (const file of files) {
@@ -46,18 +52,27 @@
         copiedPages.forEach(p => mergedPdf.addPage(p));
       }
       const pdfBytes = await mergedPdf.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       
-      if (mergedUrl) URL.revokeObjectURL(mergedUrl);
-      mergedUrl = URL.createObjectURL(blob);
-      mergedSize = blob.size;
+      // Cập nhật thông tin kết quả
+      mergedSize = pdfBytes.length;
       resultFileName = `combined_${Date.now()}.pdf`;
       
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      if (mergedUrl) URL.revokeObjectURL(mergedUrl);
+      mergedUrl = URL.createObjectURL(blob);
     } catch (e) {
       error = "Merge failed. Check your files.";
     } finally {
       isProcessing = false;
     }
+  }
+
+  // Hàm reset để dùng cho SuccessState
+  function reset() {
+    files = [];
+    mergedUrl = null;
+    mergedSize = 0;
+    error = "";
   }
 </script>
 
@@ -75,7 +90,7 @@
       <div class="mt-10">
         <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
           <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">Selected Files ({files.length})</span>
-          <button onclick={() => {files = []; mergedUrl = null;}} class="text-[10px] font-mono uppercase hover:text-black cursor-pointer underline underline-offset-4 decoration-slate-200">Clear All</button>
+          <button onclick={reset} class="text-[10px] font-mono uppercase hover:text-black cursor-pointer underline underline-offset-4 decoration-slate-200">Clear All</button>
         </div>
 
         <ul class="divide-y divide-slate-50 mb-10 max-h-100 overflow-y-auto pr-2 custom-scrollbar font-mono">
@@ -123,27 +138,18 @@
            <p class="mt-4 text-[10px] font-mono text-red-500 uppercase text-center font-bold tracking-widest">{error}</p>
         {/if}
 
-        {#if mergedUrl && !isProcessing}
-          <div class="mt-12 p-8 border border-slate-100 bg-slate-50/30 rounded-sm flex flex-col items-center animate-in fade-in slide-in-from-bottom-2">
-            <div class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center mb-4">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            </div>
-            <h4 class="text-md font-bold text-black mb-1">Success</h4>
-            <div class="flex items-center gap-3 mb-6">
-               <p class="text-[12px] text-slate-500 font-mono truncate max-w-62.5">{resultFileName}</p>
-               <span class="font-mono text-[11px] font-bold text-black bg-white border border-slate-200 px-2 py-0.5 rounded-sm">{formatBytes(mergedSize)}</span>
-            </div>
-            
-            <a 
-              href={mergedUrl} 
-              download={resultFileName}
-              class="inline-flex items-center gap-3 bg-[#22c55e] text-white px-12 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.2em] 
-                     hover:bg-[#16a34a] cursor-pointer transition-all shadow-md active:scale-[0.98]"
-            >
-              Download PDF
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            </a>
-          </div>
+        {#if mergedUrl && !isProcessing && mergedSize > 0}
+          <SuccessState 
+            type="file"
+            title="Success" 
+            subTitle="Your PDF files have been merged successfully" 
+            file={{ 
+              name: resultFileName, 
+              size: mergedSize, 
+              url: mergedUrl 
+            }}
+            onReset={reset}
+          />
         {/if}
       </div>
     {/if}

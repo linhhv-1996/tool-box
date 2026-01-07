@@ -3,10 +3,10 @@
   import createModule from '@neslinesli93/qpdf-wasm';
   import qpdfWasmUrl from '@neslinesli93/qpdf-wasm/dist/qpdf.wasm?url';
   import { Eye, EyeOff, Lock } from 'lucide-svelte';
-  
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
+  import SuccessState from '$lib/components/SuccessState.svelte'; //
   // @ts-ignore
   import Content from '$lib/content/protect-pdf.md';
 
@@ -45,25 +45,29 @@
     if (!file || !password) return;
     isProcessing = true;
     error = "";
+    protectedUrl = null;
 
+    let qpdf;
     try {
-      const qpdf = await createModule({
-        locateFile: () => qpdfWasmUrl
-      });
-
+      qpdf = await createModule({ locateFile: () => qpdfWasmUrl });
       const inputBuffer = await file.arrayBuffer();
       qpdf.FS.writeFile('input.pdf', new Uint8Array(inputBuffer));
 
-      // Execute 256-bit AES encryption
-      qpdf.callMain(['input.pdf', '--encrypt', password, password, '256', '--', 'output.pdf']);
+      try {
+        // Mã hóa AES-256
+        qpdf.callMain(['input.pdf', '--encrypt', password, password, '256', '--', 'output.pdf']);
+      } catch (e) {
+        if (e.name !== 'ExitStatus' || e.status !== 0) throw e;
+      }
 
       const outputData = qpdf.FS.readFile('output.pdf');
       const blob = new Blob([outputData], { type: 'application/pdf' });
       
-      if (protectedUrl) URL.revokeObjectURL(protectedUrl);
-      protectedUrl = URL.createObjectURL(blob);
       fileSize = blob.size;
       resultFileName = `${file.name.replace('.pdf', '')}_protected.pdf`;
+
+      if (protectedUrl) URL.revokeObjectURL(protectedUrl);
+      protectedUrl = URL.createObjectURL(blob);
 
       qpdf.FS.unlink('input.pdf');
       qpdf.FS.unlink('output.pdf');
@@ -72,6 +76,14 @@
     } finally {
       isProcessing = false;
     }
+  }
+
+  function reset() {
+    file = null;
+    password = "";
+    protectedUrl = null;
+    fileSize = 0;
+    error = "";
   }
 </script>
 
@@ -89,7 +101,7 @@
       <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
         <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
           <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">Target Document</span>
-          <button onclick={() => {file = null; protectedUrl = null; password = "";}} class="text-[10px] font-mono uppercase hover:text-black cursor-pointer underline underline-offset-4 decoration-slate-200">Remove</button>
+          <button onclick={reset} class="text-[10px] font-mono uppercase hover:text-black cursor-pointer underline underline-offset-4 decoration-slate-200">Remove</button>
         </div>
 
         <div class="py-3 flex justify-between items-center gap-4 font-mono border-b border-slate-50 mb-10">
@@ -152,25 +164,17 @@
         {/if}
 
         {#if protectedUrl && !isProcessing}
-          <div class="mt-12 p-8 border border-slate-100 bg-slate-50/30 rounded-sm flex flex-col items-center animate-in fade-in slide-in-from-bottom-2">
-            <div class="w-10 h-10 bg-[#22c55e] text-white rounded-full flex items-center justify-center mb-4 shadow-sm">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            </div>
-            <h4 class="text-md font-bold text-black mb-1">Protection Complete</h4>
-            <div class="flex items-center gap-3 mb-6">
-               <p class="text-[12px] text-slate-500 font-mono truncate max-w-[200px]">{resultFileName}</p>
-               <span class="font-mono text-[11px] font-bold text-black bg-white border border-slate-200 px-2 py-0.5 rounded-sm">{formatBytes(fileSize)}</span>
-            </div>
-            
-            <a 
-              href={protectedUrl} 
-              download={resultFileName}
-              class="inline-flex items-center gap-3 bg-[#22c55e] text-white px-12 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.2em] 
-                     hover:bg-[#16a34a] cursor-pointer transition-all shadow-md active:scale-[0.98]"
-            >
-              Download Protected PDF
-            </a>
-          </div>
+          <SuccessState 
+            type="file"
+            title="Protection Complete" 
+            subTitle="Your PDF has been encrypted with 256-bit AES security." 
+            file={{ 
+              name: resultFileName, 
+              size: fileSize, 
+              url: protectedUrl 
+            }}
+            onReset={reset}
+          />
         {/if}
       </div>
     {/if}
@@ -195,4 +199,5 @@
       {/each}
     </div>
   </div>
+
 </div>

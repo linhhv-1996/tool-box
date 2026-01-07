@@ -5,6 +5,7 @@
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
+  import SuccessState from '$lib/components/SuccessState.svelte'; //
   // @ts-ignore
   import Content from '$lib/content/split-pdf.md';
 
@@ -43,7 +44,7 @@
       const bytes = await file.arrayBuffer();
       const pdfDoc = await PDFDocument.load(bytes);
       pageCount = pdfDoc.getPageCount();
-      rangeInput = `1-${pageCount}`; 
+      rangeInput = `1-${pageCount}`;
     } catch (e) {
       error = "Could not read PDF information.";
       file = null;
@@ -76,6 +77,7 @@
     if (!file) return;
     isProcessing = true;
     error = "";
+    zipUrl = null; // Reset để ẩn SuccessState cũ nếu thực hiện lại
 
     try {
       const ranges = parseRanges(rangeInput, pageCount);
@@ -92,7 +94,6 @@
 
         const copiedPages = await newPdf.copyPages(sourcePdf, pageIndices);
         copiedPages.forEach(page => newPdf.addPage(page));
-        
         const pdfBytes = await newPdf.save();
         const name = range.start === range.end 
           ? `page_${range.start}.pdf` 
@@ -102,15 +103,25 @@
       }
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
+      zipSize = zipBlob.size; // Cập nhật size trước khi hiện UI thành công
+      resultFileName = `split_${Date.now()}.zip`;
+
       if (zipUrl) URL.revokeObjectURL(zipUrl);
       zipUrl = URL.createObjectURL(zipBlob);
-      zipSize = zipBlob.size;
-      resultFileName = `split_${Date.now()}.zip`;
     } catch (e: any) {
       error = e.message || "Split failed. Check your range syntax.";
     } finally {
       isProcessing = false;
     }
+  }
+
+  // Hàm reset dùng chung
+  function reset() {
+    file = null;
+    zipUrl = null;
+    zipSize = 0;
+    rangeInput = "";
+    error = "";
   }
 </script>
 
@@ -128,7 +139,7 @@
       <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
         <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
           <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">Selected File</span>
-          <button onclick={() => {file = null; zipUrl = null;}} class="text-[10px] font-mono uppercase hover:text-black cursor-pointer underline underline-offset-4 decoration-slate-200">Clear</button>
+          <button onclick={reset} class="text-[10px] font-mono uppercase hover:text-black cursor-pointer underline underline-offset-4 decoration-slate-200">Clear</button>
         </div>
 
         <div class="py-3 flex justify-between items-center gap-4 font-mono border-b border-slate-50 mb-8">
@@ -177,27 +188,18 @@
            <p class="mt-4 text-[10px] font-mono text-red-500 uppercase text-center font-bold tracking-widest">{error}</p>
         {/if}
 
-        {#if zipUrl && !isProcessing}
-          <div class="mt-12 p-8 border border-slate-100 bg-slate-50/30 rounded-sm flex flex-col items-center animate-in fade-in slide-in-from-bottom-2">
-            <div class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center mb-4">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            </div>
-            <h4 class="text-md font-bold text-black mb-1">Success</h4>
-            <div class="flex items-center gap-3 mb-6">
-               <p class="text-[12px] text-slate-500 font-mono truncate max-w-[250px]">{resultFileName}</p>
-               <span class="font-mono text-[11px] font-bold text-black bg-white border border-slate-200 px-2 py-0.5 rounded-sm">{formatBytes(zipSize)}</span>
-            </div>
-            
-            <a 
-              href={zipUrl} 
-              download={resultFileName}
-              class="inline-flex items-center gap-3 bg-[#22c55e] text-white px-12 py-4 font-mono text-[11px] font-bold uppercase tracking-[0.2em] 
-                     hover:bg-[#16a34a] cursor-pointer transition-all shadow-md active:scale-[0.98]"
-            >
-              Download ZIP
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            </a>
-          </div>
+        {#if zipUrl && !isProcessing && zipSize > 0}
+          <SuccessState 
+            type="file"
+            title="Split Complete" 
+            subTitle="Your PDF has been split into multiple files and bundled into a ZIP archive." 
+            file={{ 
+              name: resultFileName, 
+              size: zipSize, 
+              url: zipUrl 
+            }}
+            onReset={reset}
+          />
         {/if}
       </div>
     {/if}
