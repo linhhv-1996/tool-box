@@ -19,7 +19,7 @@
   let resultFileName = $state("");
   let resultSize = $state(0);
   let errorMessage = $state(null);
-  let pageSize = $state("original"); 
+  let pageSize = $state("original");
   let draggedIndex = $state(null);
 
   function handleFiles(newFiles) {
@@ -125,8 +125,8 @@
   <title>{toolInfo.name} | JustLocalTools</title>
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-5 py-12">
-  <div class="flex flex-col lg:flex-row gap-8">
+<div class="max-w-[980px] mx-auto px-0 py-12">
+  <div class="flex flex-col lg:flex-row lg:justify-between">
     
     <div class="w-full lg:w-[640px] shrink-0">
       <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
@@ -136,6 +136,7 @@
 
         {#if images.length > 0}
           <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
+            
             <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
               <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
                 Workspace ({images.length} images - Drag to reorder)
@@ -217,10 +218,11 @@
       </article>
     </div>
 
-    <aside class="w-full lg:w-[310px] shrink-0">
-     
+    <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0">
       <div class="sticky top-8">
-        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 pb-2 border-b border-slate-100">Related Tools</h3>
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 pb-2 border-b border-slate-100">
+          Related Tools
+        </h3>
         <div class="flex flex-col gap-y-6">
           {#each related as r}
             <a href={r.href} class="group block">
@@ -229,7 +231,7 @@
             </a>
           {/each}
         </div>
-      </div>
+        </div>
     </aside>
 
   </div>

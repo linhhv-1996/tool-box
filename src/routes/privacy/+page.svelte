@@ -2,7 +2,7 @@
   <title>Privacy Policy | LOCALTOOLS_</title>
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-5 py-16">
+<div class="max-w-[980px] mx-auto px-0 py-16">
   <div class="mb-12 pb-8">
     <h1 class="text-xl font-bold tracking-tighter font-mono uppercase text-[#1a1a1a]">
       Privacy Policy

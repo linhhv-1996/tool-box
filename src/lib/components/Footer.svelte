@@ -1,4 +1,4 @@
-<footer class="max-w-[980px] mx-auto px-5 py-4 border-t border-slate-100 text-slate-400 text-[13px] font-mono w-full">
+<footer class="max-w-[980px] mx-auto px-0 py-4 border-t border-slate-100 text-slate-400 text-[13px] font-mono w-full">
   <div class="flex flex-col md:flex-row justify-between gap-12">
     <div class="max-w-xs">
       <p class="mb-4">

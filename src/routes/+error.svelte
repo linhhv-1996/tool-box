@@ -10,7 +10,7 @@
   <title>Coming Soon | JUSTLOCALTOOLS_</title>
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-5 py-16 flex flex-col items-center text-center">
+<div class="max-w-[980px] mx-auto px-0 py-16 flex flex-col items-center text-center">
 
   <h1 class="text-[30px] font-bold tracking-tighter font-mono uppercase mb-8 mt-0 leading-none text-black">
     Coming <br /> Soon
