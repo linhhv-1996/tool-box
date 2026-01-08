@@ -9,7 +9,7 @@
       <div>
         <p class="text-black font-bold mb-3 uppercase">Project</p>
         <ul class="space-y-2">
-          <li><a href="#" class="hover:text-black transition-colors">Donate</a></li>
+          <li><a href="https://x.com/MaxSlashWang" class="hover:text-black transition-colors">Donate</a></li>
           <li><a href="https://x.com/MaxSlashWang" class="hover:text-black transition-colors">Twitter</a></li>
         </ul>
       </div>
