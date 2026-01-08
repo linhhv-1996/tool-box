@@ -38,7 +38,7 @@
 
     <div class="mt-10 max-w-md relative">
       <div class="relative group">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-300 group-focus-within:text-black transition-colors">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-black transition-colors">
           <Search size={16} />
         </div>
         <input 
@@ -47,7 +47,7 @@
           bind:value={searchQuery}
           onfocus={() => isFocused = true}
           onblur={handleBlur}
-          class="w-full h-10 pl-10 pr-4 bg-transparent border-b border-slate-200 font-mono text-[13px] focus:border-black outline-none transition-all"
+          class="w-full h-10 pl-10 pr-4 bg-transparent border-b border-slate-400 font-mono text-[13px] focus:border-black outline-none transition-all"
         />
       </div>
 
