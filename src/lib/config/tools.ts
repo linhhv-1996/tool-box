@@ -45,6 +45,12 @@ export const categories: Category[] = [
     id: "03",
     title: "Productivity",
     tools: [
+        { 
+          id: "bulk-rename", 
+          name: "Bulk File Renamer", 
+          desc: "Rename multiple files at once with custom rules: prefix, suffix, numbering, and find-replace. 100% local.", 
+          href: "/bulk-rename" 
+        },
         { id: 'copy-text-from-image', name: "OCR: Copy Text from Image", desc: "Extract text from photos and scanned documents using local OCR technology.", href: "/copy-text-from-image" },
         { id: 'excel-to-pdf', name: "Excel to PDF Converter", desc: "Transform your Excel spreadsheets into printable PDF files instantly.", href: "/excel-to-pdf" },
         { id: 'spreadsheet-to-json', name: "Spreadsheet to JSON", desc: "Convert Excel or CSV data into JSON format for developers and data analysis.", href: "/spreadsheet-to-json" }
