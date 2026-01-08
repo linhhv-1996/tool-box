@@ -25,18 +25,18 @@
   <title>JustLocalTools | Private Browser Tools Directory</title>
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-4 md:px-0 py-12">
+<div class="max-w-[980px] mx-auto px-4 md:px-0 py-10">
   
-  <section class="text-center mb-16">
+  <section class="text-left mb-16">
     <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-[#1a1a1a]">
       Private & Fast Browser Tools.<br>
       <span class="bg-black text-white px-2 inline-block mt-1 font-mono text-2xl tracking-tighter">100% Client-Side.</span>
     </h1>
-    <p class="mt-4 text-slate-500 text-sm max-w-xl mx-auto">
+    <p class="mt-4 text-slate-500 text-sm max-w-xl">
       Stop uploading your private files to random servers. Everything stays on your computer with our local-first utilities.
     </p>
 
-    <div class="mt-10 max-w-md mx-auto relative">
+    <div class="mt-10 max-w-md relative">
       <div class="relative group">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-300 group-focus-within:text-black transition-colors">
           <Search size={16} />
