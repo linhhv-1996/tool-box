@@ -1,7 +1,9 @@
 <script lang="ts">
-  // @ts-nocheck
-  import createModule from '@neslinesli93/qpdf-wasm';
+
+  // import createModule from '@neslinesli93/qpdf-wasm';
+
   import qpdfWasmUrl from '@neslinesli93/qpdf-wasm/dist/qpdf.wasm?url';
+
   import { Eye, EyeOff, Lock, Loader2 } from 'lucide-svelte';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
@@ -9,6 +11,17 @@
   import SuccessState from '$lib/components/SuccessState.svelte';
   // @ts-ignore
   import Content from '$lib/content/protect-pdf.md';
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+
+  let createModule = $state<any>(null);
+
+  onMount(async () => {
+    if (browser) {
+      const module = await import('@neslinesli93/qpdf-wasm');
+      createModule = module.default || module;
+    }
+  });
 
   const toolInfo = allTools.find((t) => t.id === 'protect-pdf')!;
   const related = allTools.filter((t) => t.id !== 'protect-pdf').slice(0, 6);
@@ -56,7 +69,7 @@
       try {
         // Mã hóa AES-256
         qpdf.callMain(['input.pdf', '--encrypt', password, password, '256', '--', 'output.pdf']);
-      } catch (e) {
+      } catch (e: any) {
         if (e.name !== 'ExitStatus' || e.status !== 0) throw e;
       }
 
