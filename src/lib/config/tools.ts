@@ -35,7 +35,7 @@ export const categories: Category[] = [
     title: "Photo & Media",
     tools: [
         { id: "remove-background", name: "Remove Background", desc: "Automatically remove image backgrounds in-browser.", href: "/remove-background" },
-        { id: "heic-to-jpg", name: "iPhone Photo Converter", desc: "Convert HEIC photos to standard JPG format.", href: "/heic-to-jpg" },
+        { id: "heic-to-jpg", name: "iPhone Photo Converter", desc: "Convert HEIC photos to standard JPG or PNG format.", href: "/heic-to-jpg" },
         { id: "shrink-images", name: "Shrink Image Size", desc: "Compress images while preserving visual quality.", href: "/shrink-images" },
         { id: "social-media-resizer", name: "Social Media Resizer", desc: "Resize images for Instagram, YouTube, and TikTok.", href: "/social-media-resizer" },
         { id: "video-to-gif", name: "Video to GIF", desc: "Turn short video clips into animated GIFs.", href: "/video-to-gif" }
