@@ -6,7 +6,7 @@
     
     <div class="h-4 w-[1px] bg-slate-200 hidden md:block"></div>
     
-    <p class="hidden md:block text-[9px] font-mono text-slate-400 uppercase tracking-widest">
+    <p class="hidden md:block text-[9px] font-mono text-slate-500 uppercase tracking-widest">
       <span class="text-emerald-600/70">●</span> 100% Private
     </p>
   </div>

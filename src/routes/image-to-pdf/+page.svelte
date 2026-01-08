@@ -235,7 +235,7 @@
 
     <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0">
       <div class="sticky top-8">
-        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 pb-2 border-b border-slate-100">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-6 pb-2 border-b border-slate-100">
           Related Tools
         </h3>
         <div class="flex flex-col gap-y-6">

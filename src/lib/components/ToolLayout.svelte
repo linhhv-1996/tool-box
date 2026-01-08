@@ -3,7 +3,7 @@
 </script>
 
 <div class="mb-10">
-  <a href="/" class="text-[10px] font-mono text-slate-400 hover:text-black mb-4 inline-block tracking-widest uppercase">
+  <a href="/" class="text-[10px] font-mono text-slate-500 hover:text-black mb-4 inline-block tracking-widest uppercase">
     ← [ Back to Toolbox ]
   </a>
   <h1 class="text-3xl font-bold tracking-tighter font-mono uppercase">{title}</h1>
