@@ -1,7 +1,8 @@
 <script lang="ts">
   // @ts-nocheck
-  import * as pdfjs from 'pdfjs-dist';
-  import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+  // import * as pdfjs from 'pdfjs-dist';
+  // import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+
   import JSZip from 'jszip';
   import { Loader2 } from 'lucide-svelte';
   
@@ -12,7 +13,21 @@
   // @ts-ignore
   import Content from '$lib/content/pdf-to-image.md';
 
-  pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+
+  let pdfjs: any = $state(null);
+
+  onMount(async () => {
+    if (browser) {
+      // Load thư viện động chỉ ở phía client
+      pdfjs = await import('pdfjs-dist');
+      const worker = await import('pdfjs-dist/build/pdf.worker.mjs?url');
+      pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
+    }
+  });
+
+  // pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
   const toolInfo = allTools.find((t) => t.id === 'pdf-to-image')!;
   const related = allTools.filter((t) => t.id !== 'pdf-to-image').slice(0, 6);
 

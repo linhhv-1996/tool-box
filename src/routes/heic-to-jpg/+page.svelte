@@ -1,6 +1,7 @@
 <script lang="ts">
   // @ts-nocheck
-  import heic2any from 'heic2any';
+  // import heic2any from 'heic2any';
+
   import JSZip from 'jszip';
   import { Loader2, X } from 'lucide-svelte';
   import { allTools } from '$lib/config/tools';
@@ -9,6 +10,20 @@
   import SuccessState from '$lib/components/SuccessState.svelte';
   // @ts-ignore
   import Content from '$lib/content/heic-to-jpg.md';
+
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+
+  let heic2any: any = $state(null);
+
+  onMount(async () => {
+    if (browser) {
+      // Chỉ load thư viện khi đã ở phía client
+      const module = await import('heic2any');
+      // heic2any thường export default hoặc đôi khi cần .default tùy version
+      heic2any = module.default || module;
+    }
+  });
 
   const toolInfo = allTools.find((t) => t.id === 'heic-to-jpg')!;
   const related = allTools.filter((t) => t.id !== 'heic-to-jpg').slice(0, 6);
