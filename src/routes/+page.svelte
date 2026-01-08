@@ -25,7 +25,7 @@
   <title>JustLocalTools | Private Browser Tools Directory</title>
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-4 md:px-0 py-20">
+<div class="max-w-[980px] mx-auto px-4 md:px-0 py-12">
   
   <section class="text-center mb-16">
     <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-[#1a1a1a]">
