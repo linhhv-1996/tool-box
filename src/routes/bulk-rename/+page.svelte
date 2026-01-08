@@ -1,6 +1,6 @@
 <script lang="ts">
   import JSZip from 'jszip';
-  import { Loader2, X, ArrowRight } from 'lucide-svelte';
+  import { Loader2, X, ArrowRight, Trash2, CaseSensitive, Hash, Type, ArrowLeftRight } from 'lucide-svelte';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
@@ -11,45 +11,64 @@
   const toolInfo = allTools.find((t) => t.id === 'bulk-rename')!;
   const related = allTools.filter((t) => t.id !== 'bulk-rename').slice(0, 6);
 
+  // Types for Rules
+  type RuleType = 'find-replace' | 'prefix-suffix' | 'numbering' | 'case';
+  interface Rule {
+    id: string;
+    type: RuleType;
+    data: any;
+  }
+
   // State
   let files = $state<File[]>([]);
   let isProcessing = $state(false);
   let zipUrl = $state<string | null>(null);
   let zipSize = $state(0);
   let resultFileName = $state("");
+  
+  // Rules State
+  let rules = $state<Rule[]>([]);
 
-  // Rename Rules
-  let prefix = $state("");
-  let suffix = $state("");
-  let findText = $state("");
-  let replaceText = $state("");
-  let useNumbering = $state(false);
-  let startNumber = $state(1);
-  let padding = $state(2); // e.g., 01, 001
+  function addRule(type: RuleType) {
+    const id = Math.random().toString(36).substring(2, 9);
+    let data = {};
+    if (type === 'find-replace') data = { find: '', replace: '' };
+    if (type === 'prefix-suffix') data = { prefix: '', suffix: '' };
+    if (type === 'numbering') data = { start: 1, padding: 2 };
+    if (type === 'case') data = { mode: 'lower' };
+    
+    rules.push({ id, type, data });
+  }
 
-  // Logic Preview - Realtime
+  function removeRule(id: string) {
+    rules = rules.filter(r => r.id !== id);
+  }
+
+  // Logic Preview - Áp dụng tất cả rules theo thứ tự
   let previewFiles = $derived(
     files.map((file, index) => {
       const ext = file.name.includes('.') ? file.name.split('.').pop() : '';
-      let nameOnly = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+      let name = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
 
-      // 1. Find and Replace
-      if (findText) {
-        nameOnly = nameOnly.split(findText).join(replaceText);
-      }
-
-      // 2. Prefix & Suffix
-      let newName = `${prefix}${nameOnly}${suffix}`;
-
-      // 3. Numbering
-      if (useNumbering) {
-        const numString = (startNumber + index).toString().padStart(padding, '0');
-        newName = `${newName}_${numString}`;
+      for (const rule of rules) {
+        const { type, data } = rule;
+        if (type === 'find-replace' && data.find) {
+          name = name.split(data.find).join(data.replace);
+        } else if (type === 'prefix-suffix') {
+          name = `${data.prefix || ''}${name}${data.suffix || ''}`;
+        } else if (type === 'numbering') {
+          const num = (data.start + index).toString().padStart(data.padding, '0');
+          name = `${name}_${num}`;
+        } else if (type === 'case') {
+          if (data.mode === 'lower') name = name.toLowerCase();
+          else if (data.mode === 'upper') name = name.toUpperCase();
+          else if (data.mode === 'title') name = name.replace(/\b\w/g, c => c.toUpperCase());
+        }
       }
 
       return {
         original: file.name,
-        new: ext ? `${newName}.${ext}` : newName
+        new: ext ? `${name}.${ext}` : name
       };
     })
   );
@@ -64,23 +83,21 @@
 
   function handleFiles(newFiles: File[]) {
     files = [...files, ...newFiles];
+    if (rules.length === 0) addRule('prefix-suffix'); // Mặc định thêm 1 rule cho dễ hiểu
     zipUrl = null;
   }
 
   async function processAction() {
     if (files.length === 0) return;
     isProcessing = true;
-    zipUrl = null;
-
     try {
       const zip = new JSZip();
       previewFiles.forEach((item, i) => {
         zip.file(item.new, files[i]);
       });
-
       const zipContent = await zip.generateAsync({ type: "blob" });
       zipSize = zipContent.size;
-      resultFileName = `renamed_files_${Date.now()}.zip`;
+      resultFileName = `renamed_${Date.now()}.zip`;
       zipUrl = URL.createObjectURL(zipContent);
     } catch (e) {
       console.error("Renaming failed", e);
@@ -91,13 +108,7 @@
 
   function reset() {
     files = [];
-    zipUrl = null;
-    zipSize = 0;
-    prefix = ""; suffix = ""; findText = ""; replaceText = "";
-  }
-
-  function removeFile(index: number) {
-    files = files.filter((_, i) => i !== index);
+    rules = [];
     zipUrl = null;
   }
 </script>
@@ -107,7 +118,7 @@
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
-  <div class="flex flex-col lg:flex-row lg:justify-between">
+  <div class="flex flex-col lg:flex-row lg:justify-between gap-12">
     
     <div class="w-full lg:w-[640px] shrink-0">
       <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
@@ -118,53 +129,88 @@
         {#if files.length > 0}
           <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-6 bg-slate-50 border border-slate-100 rounded-sm">
-              <div class="space-y-4">
-                <div>
-                  <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest">Find / Replace</label>
-                  <div class="flex gap-2">
-                    <input type="text" bind:value={findText} placeholder="Find..." class="w-full border border-slate-200 p-3 text-xs font-mono focus:border-black outline-none bg-white"/>
-                    <input type="text" bind:value={replaceText} placeholder="Replace..." class="w-full border border-slate-200 p-3 text-xs font-mono focus:border-black outline-none bg-white"/>
-                  </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                   <div>
-                    <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest">Prefix</label>
-                    <input type="text" bind:value={prefix} class="w-full border border-slate-200 p-3 text-xs font-mono focus:border-black outline-none bg-white" placeholder="Pre_"/>
-                  </div>
-                  <div>
-                    <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest">Suffix</label>
-                    <input type="text" bind:value={suffix} class="w-full border border-slate-200 p-3 text-xs font-mono focus:border-black outline-none bg-white" placeholder="_v1"/>
-                  </div>
-                </div>
-              </div>
-
-              <div class="space-y-4">
-                <div class="flex items-center gap-3 mt-1">
-                  <input type="checkbox" id="numbering" bind:checked={useNumbering} class="accent-black w-4 h-4 cursor-pointer" />
-                  <label for="numbering" class="font-mono text-[10px] font-bold uppercase text-slate-400 cursor-pointer tracking-widest">Enable Numbering</label>
-                </div>
-                
-                {#if useNumbering}
-                <div class="grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-1">
-                  <div>
-                    <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest">Start At</label>
-                    <input type="number" bind:value={startNumber} class="w-full border border-slate-200 p-3 text-xs font-mono focus:border-black outline-none bg-white"/>
-                  </div>
-                  <div>
-                    <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest">Padding</label>
-                    <select bind:value={padding} class="w-full border border-slate-200 p-3 text-xs font-mono focus:border-black outline-none bg-white">
-                      <option value={1}>1 (1, 2...)</option>
-                      <option value={2}>2 (01, 02...)</option>
-                      <option value={3}>3 (001, 002...)</option>
-                    </select>
-                  </div>
-                </div>
-                {/if}
+            <div class="mb-6">
+              <span class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-3 tracking-widest">Add Renaming Rule</span>
+              <div class="flex flex-wrap gap-2">
+                <button onclick={() => addRule('find-replace')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
+                  <ArrowLeftRight size={12} /> Find & Replace
+                </button>
+                <button onclick={() => addRule('prefix-suffix')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
+                  <Type size={12} /> Prefix / Suffix
+                </button>
+                <button onclick={() => addRule('numbering')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
+                  <Hash size={12} /> Numbering
+                </button>
+                <button onclick={() => addRule('case')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
+                  <CaseSensitive size={12} /> Change Case
+                </button>
               </div>
             </div>
 
-            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
+            <div class="space-y-3 mb-10">
+              {#each rules as rule (rule.id)}
+                <div class="group relative bg-slate-50 border border-slate-100 p-4 rounded-sm animate-in slide-in-from-left-2 duration-200">
+                  <button 
+                    onclick={() => removeRule(rule.id)}
+                    class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+
+                  <div class="flex flex-col gap-3">
+                    <span class="text-[9px] font-bold font-mono uppercase text-slate-400 tracking-tighter">
+                      Rule: {rule.type.replace('-', ' ')}
+                    </span>
+
+                    {#if rule.type === 'find-replace'}
+                      <div class="grid grid-cols-2 gap-3">
+                        <input type="text" bind:value={rule.data.find} placeholder="Find..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
+                        <input type="text" bind:value={rule.data.replace} placeholder="Replace..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
+                      </div>
+                    {:else if rule.type === 'prefix-suffix'}
+                      <div class="grid grid-cols-2 gap-3">
+                        <input type="text" bind:value={rule.data.prefix} placeholder="Prefix..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
+                        <input type="text" bind:value={rule.data.suffix} placeholder="Suffix..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
+                      </div>
+                    {:else if rule.type === 'numbering'}
+                      <div class="flex gap-3">
+                        <div class="flex-1">
+                          <span class="text-[8px] uppercase text-slate-400 block mb-1">Start At</span>
+                          <input type="number" bind:value={rule.data.start} class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
+                        </div>
+                        <div class="flex-1">
+                          <span class="text-[8px] uppercase text-slate-400 block mb-1">Padding</span>
+                          <select bind:value={rule.data.padding} class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white h-[34px]">
+                            <option value={1}>1</option>
+                            <option value={2}>01</option>
+                            <option value={3}>001</option>
+                          </select>
+                        </div>
+                      </div>
+                    {:else if rule.type === 'case'}
+                      <div class="flex gap-2">
+                        {#each ['lower', 'upper', 'title'] as m}
+                          <button 
+                            onclick={() => rule.data.mode = m}
+                            class="flex-1 py-1.5 border text-[10px] font-mono uppercase transition-all {rule.data.mode === m ? 'bg-black text-white border-black' : 'bg-white text-slate-400 border-slate-200 hover:border-slate-400'}"
+                          >
+                            {m}
+                          </button>
+                        {/each}
+                      </div>
+                    {/if}
+                  </div>
+                </div>
+              {/each}
+              
+              {#if rules.length === 0}
+                <div class="border-2 border-dashed border-slate-100 py-8 text-center rounded-sm">
+                  <p class="text-[10px] font-mono text-slate-300 uppercase tracking-widest">No rules added yet</p>
+                </div>
+              {/if}
+            </div>
+
+            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4 mt-12">
               <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
                 Preview Changes ({files.length})
               </span>
@@ -187,7 +233,7 @@
                     </div>
                     <span class="text-[9px] text-slate-400 uppercase shrink-0 bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100">{formatBytes(files[i].size)}</span>
                   </div>
-                  <button onclick={() => removeFile(i)} class="text-slate-300 hover:text-black p-1 transition-colors">
+                  <button onclick={() => {files = files.filter((_, idx) => idx !== i)}} class="text-slate-300 hover:text-black p-1 transition-colors">
                     <X size={14} />
                   </button>
                 </li>
@@ -196,7 +242,7 @@
 
             <button 
               onclick={processAction}
-              disabled={isProcessing}
+              disabled={isProcessing || files.length === 0}
               class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
             >
               {#if isProcessing}
@@ -211,7 +257,7 @@
                 <SuccessState 
                   type="file"
                   title="Files Renamed" 
-                  subTitle="Your {files.length} files are ready with the new names." 
+                  subTitle="Your {files.length} files are ready." 
                   file={{ name: resultFileName, size: zipSize, url: zipUrl }}
                   previews={[]} 
                   onReset={reset}
