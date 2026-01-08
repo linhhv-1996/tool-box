@@ -28,9 +28,9 @@ See your changes before they happen. As you type your Prefix or Suffix, the "New
 
 ## How to Rename Files in Bulk
 
-1.  **Select Files**: Drag and drop your files into the workspace or click to browse.
-2.  **Apply Rules**: Enter your desired Prefix, Suffix, or enable numbering.
-3.  **Download ZIP**: Click **"Apply & Download ZIP"** to get all your renamed files packaged in a single, convenient archive.
+*  **Select Files**: Drag and drop your files into the workspace or click to browse.
+*  **Apply Rules**: Enter your desired Prefix, Suffix, or enable numbering.
+*  **Download ZIP**: Click **"Apply & Download ZIP"** to get all your renamed files packaged in a single, convenient archive.
 
 ## Frequently Asked Questions
 

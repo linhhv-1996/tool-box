@@ -17,9 +17,9 @@ Since there is no server upload or download involved, you can protect massive PD
 
 ## How to Password Protect Your PDF
 
-1.  **Select Your File**: Drag and drop your PDF into the secure zone.
-2.  **Set a Strong Password**: Enter the password you want to use to lock the file.
-3.  **Protect & Download**: Click "Protect PDF". Your new, encrypted file will be ready for download immediately.
+*  **Select Your File**: Drag and drop your PDF into the secure zone.
+*  **Set a Strong Password**: Enter the password you want to use to lock the file.
+*  **Protect & Download**: Click "Protect PDF". Your new, encrypted file will be ready for download immediately.
 
 ## Frequently Asked Questions
 

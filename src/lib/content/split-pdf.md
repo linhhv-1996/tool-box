@@ -19,9 +19,9 @@ Whether you need a single page, a range (e.g., 1-5), or multiple separate sectio
 
 Follow these simple steps to extract your pages:
 
-1.  **Select PDF File**: Drag and drop or click to select the PDF you want to split.
-2.  **Enter Page Ranges**: Input the page numbers or ranges you need. For example, enter `1, 3, 5-10` to get page 1, page 3, and the segment from 5 to 10 as separate files.
-3.  **Split & Download**: Click "Split & Export ZIP". The extracted pages will be bundled into a single ZIP file for easy downloading.
+*  **Select PDF File**: Drag and drop or click to select the PDF you want to split.
+*  **Enter Page Ranges**: Input the page numbers or ranges you need. For example, enter `1, 3, 5-10` to get page 1, page 3, and the segment from 5 to 10 as separate files.
+*  **Split & Download**: Click "Split & Export ZIP". The extracted pages will be bundled into a single ZIP file for easy downloading.
 
 ## Frequently Asked Questions
 

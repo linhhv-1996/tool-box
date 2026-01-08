@@ -21,9 +21,9 @@ Don't waste time converting photos one by one. Our tool supports uploading and p
 
 ## How to Convert HEIC to JPG/PNG in 3 Simple Steps
 
-1. **Upload Photos:** Drag and drop your `.heic` or `.heif` files into the Dropzone area above, or click to select files from your device.
-2. **Select Format:** Choose between **JPG** (JPEG) or **PNG** based on your specific needs.
-3. **Convert & Download:** Click the "Convert" button and wait a few seconds. Once finished, you can preview the converted images and download the ZIP archive to your machine.
+* **Upload Photos:** Drag and drop your `.heic` or `.heif` files into the Dropzone area above, or click to select files from your device.
+* **Select Format:** Choose between **JPG** (JPEG) or **PNG** based on your specific needs.
+* **Convert & Download:** Click the "Convert" button and wait a few seconds. Once finished, you can preview the converted images and download the ZIP archive to your machine.
 
 
 ## What is HEIC? Why Does Apple Use This Format?

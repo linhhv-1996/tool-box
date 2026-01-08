@@ -17,8 +17,8 @@ Our tool doesn't just remove the "Open" password; it also strips away permission
 
 ## How to Unlock Your PDF
 
-1.  **Select Protected File**: Upload the password-protected PDF you want to unlock.
-2.  **Enter Existing Password**: Provide the current password required to open the document.
-3.  **Unlock & Download**: Click "Unlock PDF". The security will be removed, and you can download the clean version instantly.
+*  **Select Protected File**: Upload the password-protected PDF you want to unlock.
+*  **Enter Existing Password**: Provide the current password required to open the document.
+*  **Unlock & Download**: Click "Unlock PDF". The security will be removed, and you can download the clean version instantly.
 
 *Note: You must know the correct password to unlock the file. This tool is not for "cracking" passwords.*
