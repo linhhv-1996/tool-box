@@ -27,7 +27,13 @@ export const categories: Category[] = [
         { id: "split-pdf", name: "Split PDF Online", desc: "Extract specific pages or split your PDF into multiple documents instantly.", href: "/split-pdf" },
         { id: "unlock-pdf", name: "Unlock PDF Password", desc: "Remove passwords and restrictions from secured PDF files locally in your browser.", href: "/unlock-pdf" },
         { id: "protect-pdf", name: "Protect PDF with Password", desc: "Encrypt your PDF documents with a strong password. Everything stays on your computer.", href: "/protect-pdf" },
-        { id: "pdf-to-image", name: "PDF to Image Converter", desc: "Convert PDF pages into high-quality JPG or PNG images without any file size limits.", href: "/pdf-to-image" }
+        { id: "pdf-to-image", name: "PDF to Image Converter", desc: "Convert PDF pages into high-quality JPG or PNG images without any file size limits.", href: "/pdf-to-image" },
+        { 
+          id: "compress-pdf", 
+          name: "Compress PDF", 
+          desc: "Reduce the file size of your PDF documents while maintaining quality. 100% private and local.", 
+          href: "/compress-pdf" 
+        },
     ]
   },
   {
