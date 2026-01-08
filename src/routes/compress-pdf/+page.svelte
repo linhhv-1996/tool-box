@@ -6,10 +6,10 @@
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
   import SuccessState from '$lib/components/SuccessState.svelte';
-  // @ts-ignore
   import Content from '$lib/content/compress-pdf.md';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import JSZip from 'jszip';
 
   let createModule = $state<any>(null);
 
@@ -23,8 +23,10 @@
   const toolInfo = allTools.find((t) => t.id === 'compress-pdf')!;
   const related = allTools.filter((t) => t.id !== 'compress-pdf' && t.id !== 'combine-pdf').slice(0, 6);
 
-  let file = $state<File | null>(null);
+  // Chuyển sang mảng files để hỗ trợ bulk
+  let files = $state<File[]>([]); 
   let isProcessing = $state(false);
+  let progress = $state({ current: 0, total: 0 }); // Theo dõi tiến trình để tránh lag UI
   let error = $state("");
   let resultUrl = $state<string | null>(null);
   let resultFileName = $state("");
@@ -41,66 +43,81 @@
   function handleFiles(newFiles: File[]) {
     error = "";
     resultUrl = null;
-    const pdf = newFiles.find((f) => f.type === "application/pdf");
-    if (!pdf) {
-      error = "Please select a valid PDF file.";
+    // Lọc tất cả các file PDF được chọn
+    const pdfs = newFiles.filter((f) => f.type === "application/pdf");
+    if (pdfs.length === 0) {
+      error = "Please select valid PDF files.";
       return;
     }
-    file = pdf;
+    files = pdfs;
   }
 
   async function compressAction() {
-    if (!file || !createModule) return;
-    
+    if (files.length === 0 || !createModule) return;
     isProcessing = true;
     error = "";
-    resultUrl = null;
+    progress = { current: 0, total: files.length };
 
+    const zip = new JSZip();
     let qpdf;
-    try {
-      // Initialize module with locateFile following the protect-pdf pattern
-      qpdf = await createModule({ locateFile: () => qpdfWasmUrl });
-      
-      const inputBuffer = await file.arrayBuffer();
-      qpdf.FS.writeFile('input.pdf', new Uint8Array(inputBuffer));
 
-      try {
-        // Using callMain for execution
-        // Compression flags: optimize streams and generate object streams
-        qpdf.callMain([
-            'input.pdf', 
+    try {
+      // Khởi tạo module một lần duy nhất
+      qpdf = await createModule({ locateFile: () => qpdfWasmUrl });
+
+      for (const file of files) {
+        progress.current++;
+        const inputBuffer = await file.arrayBuffer();
+        const inputName = 'input.pdf';
+        const outputName = 'output.pdf';
+
+        qpdf.FS.writeFile(inputName, new Uint8Array(inputBuffer));
+
+        try {
+          qpdf.callMain([
+            inputName, 
             '--compress-streams=y', 
-            '--object-streams=generate', 
-            '--linearize', 
-            'output.pdf'
-        ]);
-      } catch (e: any) {
-        if (e.name !== 'ExitStatus' || e.status !== 0) throw e;
+            '--object-streams=generate',  
+            outputName
+          ]);
+        } catch (e: any) {
+          if (e.name !== 'ExitStatus' || e.status !== 0) throw e;
+        }
+
+        const outputData = qpdf.FS.readFile(outputName);
+        
+        if (files.length === 1) {
+          // Nếu chỉ có 1 file, xử lý như cũ
+          const blob = new Blob([outputData], { type: 'application/pdf' });
+          resultSize = blob.size;
+          resultFileName = `${file.name.replace('.pdf', '')}_compressed.pdf`;
+          resultUrl = URL.createObjectURL(blob);
+        } else {
+          zip.file(`${file.name.replace('.pdf', '')}_compressed.pdf`, outputData);
+        }
+
+        // Dọn dẹp bộ nhớ ảo sau mỗi file để tránh lag
+        qpdf.FS.unlink(inputName);
+        qpdf.FS.unlink(outputName);
       }
 
-      const outputData = qpdf.FS.readFile('output.pdf');
-      const blob = new Blob([outputData], { type: 'application/pdf' });
-      
-      resultSize = blob.size;
-      resultFileName = `${file.name.replace('.pdf', '')}_compressed.pdf`;
-
-      if (resultUrl) URL.revokeObjectURL(resultUrl);
-      resultUrl = URL.createObjectURL(blob);
-
-      // Cleanup virtual file system
-      qpdf.FS.unlink('input.pdf');
-      qpdf.FS.unlink('output.pdf');
+      if (files.length > 1) {
+        const content = await zip.generateAsync({ type: "blob" });
+        resultSize = content.size;
+        resultFileName = `compressed_pdfs_${Date.now()}.zip`;
+        resultUrl = URL.createObjectURL(content);
+      }
 
     } catch (e: any) {
       console.error(e);
-      error = "Compression failed. The file might already be optimized.";
+      error = "Compression failed for one or more files.";
     } finally {
       isProcessing = false;
     }
   }
 
   function reset() {
-    file = null;
+    files = [];
     resultUrl = null;
     resultSize = 0;
     error = "";
@@ -108,37 +125,39 @@
 </script>
 
 <svelte:head>
-  <title>Compress PDF Online - Local & Secure PDF Reducer</title>
-  <meta name="description" content="Reduce PDF file size locally in your browser. No server uploads, 100% private and secure compression." />
+  <title>Compress PDF Online - Bulk & Secure PDF Reducer</title>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
   <div class="flex flex-col lg:flex-row lg:justify-between">
-    
     <div class="w-full lg:w-[640px] shrink-0">
       <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
       <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
-        <Dropzone onfiles={handleFiles} multiple={false} accept=".pdf" />
+        <Dropzone onfiles={handleFiles} multiple={true} accept=".pdf" />
 
-        {#if file}
+        {#if files.length > 0}
           <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
             <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
               <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
-                Target Document
+                Target Documents ({files.length})
               </span>
               <button onclick={reset} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">
-                Remove
+                Remove All
               </button>
             </div>
 
-            <div class="py-3 flex justify-between items-center gap-4 font-mono border-b border-slate-50 mb-10">
-                <div class="flex items-center gap-3 min-w-0 flex-1">
-                    <span class="text-[12px] text-[#1a1a1a] truncate font-bold shrink grow-0">{file.name}</span>
-                    <span class="text-[9px] text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100 whitespace-nowrap">
-                      {formatBytes(file.size)}
-                    </span>
+            <div class="max-h-48 overflow-y-auto mb-10 border-b border-slate-50">
+              {#each files as f}
+                <div class="py-3 flex justify-between items-center gap-4 font-mono">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <span class="text-[12px] text-[#1a1a1a] truncate font-bold shrink grow-0">{f.name}</span>
+                        <span class="text-[9px] text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100 whitespace-nowrap">
+                          {formatBytes(f.size)}
+                        </span>
+                    </div>
                 </div>
+              {/each}
             </div>
 
             <button 
@@ -147,9 +166,10 @@
               class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
             >
               {#if isProcessing}
-                <Loader2 class="animate-spin mr-2" size={16} /> Compressing Locally...
+                <Loader2 class="animate-spin mr-2" size={16} /> 
+                Compressing {progress.current}/{progress.total}...
               {:else}
-                Compress PDF
+                Compress {files.length} PDF{files.length > 1 ? 's' : ''}
               {/if}
             </button>
             
@@ -162,7 +182,7 @@
                 <SuccessState 
                   type="file"
                   title="Compression Complete" 
-                  subTitle="Reduced from {formatBytes(file.size)} to {formatBytes(resultSize)}." 
+                  subTitle={files.length > 1 ? `Successfully compressed ${files.length} files into a ZIP.` : "Your PDF has been compressed successfully."} 
                   file={{ 
                     name: resultFileName, 
                     size: resultSize, 
@@ -196,6 +216,6 @@
         </div>
       </div>
     </aside>
-
-  </div>
+    
+    </div>
 </div>
