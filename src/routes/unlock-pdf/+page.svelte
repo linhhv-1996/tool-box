@@ -92,7 +92,22 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
+  <title>Unlock PDF Password Online - Remove Restrictions Locally</title>
+  <meta name="description" content="Remove passwords and restrictions from secured PDF files locally in your browser. No server upload, keeping your sensitive documents safe." />
+  <meta property="og:title" content="Unlock PDF Online - JustLocalTools" />
+  <meta property="og:description" content="Remove PDF passwords and restrictions privately on your device." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Unlock PDF",
+    "url": "https://justlocaltools.com/unlock-pdf",
+    "description": "Remove password protection from PDFs locally without uploading files.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

@@ -122,7 +122,22 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JustLocalTools</title>
+  <title>Free Image to PDF Converter Online - 100% Private & Fast</title>
+  <meta name="description" content="Convert JPG, PNG, and WebP images to PDF online for free. No file uploads, no server storage. Combine and reorder images into a single PDF privately." />
+  <meta property="og:title" content="Free Image to PDF Converter Online - JustLocalTools" />
+  <meta property="og:description" content="Convert images to PDF privately on your device. Fast, free, and no installation required." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Image to PDF Converter",
+    "url": "https://justlocaltools.com/image-to-pdf",
+    "description": "Convert and reorder images into a single PDF document locally in your browser.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

@@ -20,34 +20,34 @@ export const categories: Category[] = [
         { 
   id: "image-to-pdf", 
   name: "Image to PDF", 
-  desc: "Convert and reorder images into a single PDF document.", 
+  desc: "Convert JPG, PNG, and WebP images into a professional PDF document online for free.", 
   href: "/image-to-pdf" 
 },
-        { id: "combine-pdf", name: "Combine PDF Files", desc: "Merge multiple PDF documents into one.", href: "/combine-pdf" },
-        { id: "split-pdf", name: "Split PDF", desc: "Extract or split pages from a PDF file.", href: "/split-pdf" },
-        { id: "unlock-pdf", name: "Unlock PDF", desc: "Remove password protection from PDFs locally.", href: "/unlock-pdf" },
-        { id: "protect-pdf", name: "Protect PDF", desc: "Add a password to secure your documents.", href: "/protect-pdf" },
-        { id: "pdf-to-image", name: "PDF to Image", desc: "Convert PDF pages into JPG or PNG images.", href: "/pdf-to-image" }
+        { id: "combine-pdf", name: "Merge PDF Files Online", desc: "Combine multiple PDF documents into one single file. 100% private, no server upload.", href: "/combine-pdf" },
+        { id: "split-pdf", name: "Split PDF Online", desc: "Extract specific pages or split your PDF into multiple documents instantly.", href: "/split-pdf" },
+        { id: "unlock-pdf", name: "Unlock PDF Password", desc: "Remove passwords and restrictions from secured PDF files locally in your browser.", href: "/unlock-pdf" },
+        { id: "protect-pdf", name: "Protect PDF with Password", desc: "Encrypt your PDF documents with a strong password. Everything stays on your computer.", href: "/protect-pdf" },
+        { id: "pdf-to-image", name: "PDF to Image Converter", desc: "Convert PDF pages into high-quality JPG or PNG images without any file size limits.", href: "/pdf-to-image" }
     ]
   },
   {
     id: "02",
     title: "Photo & Media",
     tools: [
-        { id: "remove-background", name: "Remove Background", desc: "Automatically remove image backgrounds in-browser.", href: "/remove-background" },
-        { id: "heic-to-jpg", name: "iPhone Photo Converter", desc: "Convert HEIC photos to standard JPG or PNG format.", href: "/heic-to-jpg" },
-        { id: "shrink-images", name: "Shrink Image Size", desc: "Compress images while preserving visual quality.", href: "/shrink-images" },
-        { id: "social-media-resizer", name: "Social Media Resizer", desc: "Resize images for Instagram, YouTube, and TikTok.", href: "/social-media-resizer" },
-        { id: "video-to-gif", name: "Video to GIF", desc: "Turn short video clips into animated GIFs.", href: "/video-to-gif" }
+        { id: "remove-background", name: "AI Background Remover", desc: "Automatically remove image backgrounds in-browser using AI. No data leaves your device.", href: "/remove-background" },
+        { id: "heic-to-jpg", name: "HEIC to JPG/PNG Converter", desc: "Convert iPhone HEIC photos to standard JPG or PNG format. Batch processing supported.", href: "/heic-to-jpg" },
+        { id: "shrink-images", name: "Compress Images Online", desc: "Reduce image file size while preserving high visual quality. Secure and private compression.", href: "/shrink-images" },
+        { id: "social-media-resizer", name: "Social Media Image Resizer", desc: "Resize images for Instagram, YouTube, TikTok, and more using local browser power.", href: "/social-media-resizer" },
+        { id: "video-to-gif", name: "Video to GIF Converter", desc: "Turn your short video clips into animated GIFs quickly and privately.", href: "/video-to-gif" }
     ]
   },
   {
     id: "03",
     title: "Productivity",
     tools: [
-        { id: 'copy-text-from-image', name: "Copy Text from Image", desc: "Extract text from photos and scanned documents.", href: "/copy-text-from-image" },
-        { id: 'excel-to-pdf', name: "Excel to PDF", desc: "Convert Excel spreadsheets into printable PDFs.", href: "/excel-to-pdf" },
-        { id: 'spreadsheet-to-json', name: "Spreadsheet to JSON", desc: "Transform spreadsheet data into JSON format.", href: "/spreadsheet-to-json" }
+        { id: 'copy-text-from-image', name: "OCR: Copy Text from Image", desc: "Extract text from photos and scanned documents using local OCR technology.", href: "/copy-text-from-image" },
+        { id: 'excel-to-pdf', name: "Excel to PDF Converter", desc: "Transform your Excel spreadsheets into printable PDF files instantly.", href: "/excel-to-pdf" },
+        { id: 'spreadsheet-to-json', name: "Spreadsheet to JSON", desc: "Convert Excel or CSV data into JSON format for developers and data analysis.", href: "/spreadsheet-to-json" }
     ]
   },
   {

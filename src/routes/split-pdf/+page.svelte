@@ -125,7 +125,22 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
+  <title>Split PDF Online - Extract Pages Privately & Free</title>
+  <meta name="description" content="Extract specific pages or split your PDF into multiple documents instantly. Completely local tool ensures your data stays on your device." />
+  <meta property="og:title" content="Split PDF Online - JustLocalTools" />
+  <meta property="og:description" content="Split PDF files and extract pages privately. Fast, free, and no file uploads required." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Split PDF",
+    "url": "https://justlocaltools.com/split-pdf",
+    "description": "Extract or split pages from a PDF file locally in your browser.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

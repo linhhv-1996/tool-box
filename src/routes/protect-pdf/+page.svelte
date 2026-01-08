@@ -87,7 +87,22 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
+  <title>Protect PDF with Password Online - Secure Your Documents</title>
+  <meta name="description" content="Encrypt your PDF documents with a strong password. Add security to your files without uploading them to any server. 100% local and private." />
+  <meta property="og:title" content="Protect PDF Online - JustLocalTools" />
+  <meta property="og:description" content="Add a password to secure your documents privately on your device." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Protect PDF",
+    "url": "https://justlocaltools.com/protect-pdf",
+    "description": "Add a password to secure your documents locally in your browser.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

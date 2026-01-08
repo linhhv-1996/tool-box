@@ -23,16 +23,17 @@
 </script>
 
 <svelte:head>
-  <title>JustLocalTools | Private & Fast Browser Tools</title>
+  <title>JustLocalTools | Free & Private Online Browser Tools</title>
+  <meta name="description" content="Access a collection of secure, local-first tools for PDF conversion, image editing, and productivity. No servers, no tracking, just local power." />
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
   <section class="mb-8">
-    <h2 class="text-2xl leading-snug max-w-2xl font-semibold tracking-tight">
+    <h1 class="text-2xl leading-snug max-w-2xl font-semibold tracking-tight">
       Stop uploading your private files to random servers.
       <span class="bg-black text-white px-1 ml-1">Everything stays on your computer.</span> 
-      Our tools use your browser's power to get the job done instantly.
-    </h2>
+      Fast, Free & Private Browser-based Productivity Tools.
+    </h1>
   </section>
 
   <div class="mb-16 max-w-md relative">

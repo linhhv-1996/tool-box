@@ -21,7 +21,7 @@ export const GET = async () => {
           <url>
             <loc>${domain}${page}</loc>
             <changefreq>weekly</changefreq>
-            <priority>${page === '' ? '1.0' : '0.8'}</priority>
+            <priority>${page === '' ? '1.0' : (toolPages.includes(page) ? '0.9' : '0.5')}</priority>
           </url>
         `)
         .join('')}

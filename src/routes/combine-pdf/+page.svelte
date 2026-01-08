@@ -75,7 +75,22 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
+  <title>Merge PDF Files Online - Combine PDF Locally & Securely</title>
+  <meta name="description" content="Combine multiple PDF documents into one single file instantly. Your files never leave your computer. 100% private, free, and secure PDF merger." />
+  <meta property="og:title" content="Merge PDF Files Online - JustLocalTools" />
+  <meta property="og:description" content="Combine PDF documents privately on your device. No server uploads, no privacy risks." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Combine PDF Files",
+    "url": "https://justlocaltools.com/combine-pdf",
+    "description": "Merge multiple PDF documents into one single file locally.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

@@ -101,7 +101,22 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
+  <title>Free PDF to Image Converter - High Quality JPG & PNG</title>
+  <meta name="description" content="Convert PDF pages into high-quality JPG or PNG images instantly. No file size limits, no server uploads. Your privacy is our priority." />
+  <meta property="og:title" content="PDF to Image Converter - JustLocalTools" />
+  <meta property="og:description" content="Convert PDF pages to images privately. Choose between JPG or PNG output directly on your device." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PDF to Image Converter",
+    "url": "https://justlocaltools.com/pdf-to-image",
+    "description": "Convert PDF pages into JPG or PNG images locally in your browser.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
