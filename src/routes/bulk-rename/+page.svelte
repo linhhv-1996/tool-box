@@ -118,7 +118,7 @@
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
-  <div class="flex flex-col lg:flex-row lg:justify-between gap-12">
+  <div class="flex flex-col lg:flex-row lg:justify-between">
     
     <div class="w-full lg:w-[640px] shrink-0">
       <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
