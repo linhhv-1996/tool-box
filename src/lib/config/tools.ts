@@ -62,14 +62,14 @@ export const categories: Category[] = [
         { id: 'spreadsheet-to-json', name: "Spreadsheet to JSON", desc: "Convert Excel or CSV data into JSON format for developers and data analysis.", href: "/spreadsheet-to-json" }
     ]
   },
-  {
-    id: "04",
-    title: "Security & Others",
-    tools: [
-        { id: "secure-password-generator", name: "Secure Password Generator", desc: "Generate strong passwords using your device only.", href: "/secure-password-generator" },
-        { id: "private-qr-generator", name: "Private QR Generator", desc: "Create QR codes without tracking or data sharing.", href: "/private-qr-generator" }
-    ]
-  }
+  // {
+  //   id: "04",
+  //   title: "Security & Others",
+  //   tools: [
+  //       { id: "secure-password-generator", name: "Secure Password Generator", desc: "Generate strong passwords using your device only.", href: "/secure-password-generator" },
+  //       { id: "private-qr-generator", name: "Private QR Generator", desc: "Create QR codes without tracking or data sharing.", href: "/private-qr-generator" }
+  //   ]
+  // }
 ];
 
 export const allTools: Tool[] = categories.flatMap(c => c.tools);

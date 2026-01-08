@@ -5,7 +5,7 @@
 </script>
 
 <div class="selection:bg-yellow-200 min-h-screen flex flex-col bg-white text-[#1a1a1a]">
-  <Header />
+  <!-- <Header /> -->
   
   <main class="flex-grow">
     <slot />
