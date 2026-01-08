@@ -89,10 +89,10 @@
           {#each category.tools as tool}
             <li class="group/item">
               <a href={tool.href} class="block border-l-2 border-transparent hover:border-slate-200 pl-3 transition-all">
-                <span class="text-[13px] font-bold text-black block leading-none group-hover/item:underline decoration-slate-300 underline-offset-2">
+                <span class="text-[14px] font-bold text-black block leading-none group-hover/item:underline decoration-slate-300 underline-offset-2">
                   {tool.name}
                 </span>
-                <span class="text-[11px] text-slate-500 leading-snug mt-1.5 block opacity-70 group-hover/item:opacity-100 transition-opacity font-mono">
+                <span class="text-[12px] text-slate-500 leading-snug mt-1.5 block opacity-70 group-hover/item:opacity-100 transition-opacity font-mono">
                   {tool.desc}
                 </span>
               </a>

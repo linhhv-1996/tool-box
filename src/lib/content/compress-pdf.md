@@ -15,9 +15,9 @@ In 2026, privacy and speed are non-negotiable. Here is why thousands of users tr
 
 Reducing your file size is simple and takes only seconds:
 
-1.  **Select or Drop Files:** Drag and drop your PDF documents into the box above. You can select one or multiple files at once.
-2.  **Automatic Optimization:** The tool immediately analyzes and compresses each file using browser-side processing.
-3.  **Instant Download:** Once finished, download your optimized PDFs individually or as a single ZIP archive for convenience.
+*  **Select or Drop Files:** Drag and drop your PDF documents into the box above. You can select one or multiple files at once.
+*  **Automatic Optimization:** The tool immediately analyzes and compresses each file using browser-side processing.
+*  **Instant Download:** Once finished, download your optimized PDFs individually or as a single ZIP archive for convenience.
 
 ## Advanced PDF Optimization Features
 

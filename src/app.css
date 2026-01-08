@@ -36,11 +36,11 @@
 }
 
 .prose h1, .prose h2, .prose h3 {
-  @apply font-mono font-bold uppercase tracking-tighter text-black mt-10 mb-5;
+  @apply font-mono font-bold uppercase tracking-tighter text-black mt-10 mb-2;
 }
 
-.prose h1 { @apply text-2xl border-b border-slate-100 pb-2; }
-.prose h2 { @apply text-xl border-b border-slate-50 pb-1; }
+.prose h1 { @apply text-2xl border-b border-slate-100 pb-2 mb-4; } 
+.prose h2 { @apply text-xl border-b border-slate-50 pb-1 mb-3; }
 .prose h3 { @apply text-base; }
 
 .prose p { @apply mb-4; }
