@@ -12,6 +12,7 @@
      <h1 class="text-xl font-bold tracking-tighter font-mono uppercase text-[#1a1a1a]">
       How it works
     </h1>
+    <hr class="mt-3 border-slate-100">
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">

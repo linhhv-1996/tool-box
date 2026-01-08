@@ -7,6 +7,7 @@
     <h1 class="text-xl font-bold tracking-tighter font-mono uppercase text-[#1a1a1a]">
       Privacy Policy
     </h1>
+    <hr class="mt-3 border-slate-100">
   </div>
 
   <article class="prose max-w-none">

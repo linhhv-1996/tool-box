@@ -261,7 +261,9 @@
     {/each}
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+  <hr class="mb-16 border-slate-100">
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 ">
     <div class="flex items-start gap-3 p-4 bg-slate-50 border border-slate-100 rounded-sm">
       <Lock size={18} class="mt-1 text-black" />
       <div>
