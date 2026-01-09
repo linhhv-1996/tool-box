@@ -18,11 +18,11 @@ export const categories: Category[] = [
     title: "PDF Utilities",
     tools: [
         { 
-  id: "image-to-pdf", 
-  name: "Image to PDF", 
-  desc: "Convert JPG, PNG, and WebP images into a professional PDF document online for free.", 
-  href: "/image-to-pdf" 
-},
+          id: "image-to-pdf", 
+          name: "Image to PDF", 
+          desc: "Convert JPG, PNG, and WebP images into a professional PDF document online for free.", 
+          href: "/image-to-pdf" 
+        },
         { id: "combine-pdf", name: "Merge PDF Files Online", desc: "Combine multiple PDF documents into one single file. 100% private, no server upload.", href: "/combine-pdf" },
         { id: "split-pdf", name: "Split PDF Online", desc: "Extract specific pages or split your PDF into multiple documents instantly.", href: "/split-pdf" },
         { id: "unlock-pdf", name: "Unlock PDF Password", desc: "Remove passwords and restrictions from secured PDF files locally in your browser.", href: "/unlock-pdf" },
@@ -40,6 +40,7 @@ export const categories: Category[] = [
     id: "02",
     title: "Photo & Media",
     tools: [
+        { id: "compress-video", name: "Compress Video Online", desc: "Reduce video file size using FFmpeg WASM. 100% private, multi-threaded processing.", href: "/compress-video" },
         { id: "remove-background", name: "AI Background Remover", desc: "Automatically remove image backgrounds in-browser using AI. No data leaves your device.", href: "/remove-background" },
         { id: "heic-to-jpg", name: "HEIC to JPG/PNG Converter", desc: "Convert iPhone HEIC photos to standard JPG or PNG format. Batch processing supported.", href: "/heic-to-jpg" },
         { id: "shrink-images", name: "Compress Images Online", desc: "Reduce image file size while preserving high visual quality. Secure and private compression.", href: "/shrink-images" },
