@@ -1,44 +1,97 @@
-# Bulk File Renamer: Fast, Secure & Local Batch Renaming
+## Bulk File Renamer – Batch Rename Files Directly in Your Browser
 
-Tired of manually renaming hundreds of files one by one? Whether it's a messy photo collection or a disorganized set of project documents, our **Bulk File Renamer** provides a professional, instant solution directly in your browser.
+**Bulk File Renamer** is a browser-based tool that allows you to **rename multiple files at once** without installing any software. All file renaming is handled **client-side in the browser**, with no uploads and no server-side processing.
 
-## Why Choose Our Local Bulk Renamer?
-
-Most online tools require you to upload your files to their servers. We do things differently. Following our **Just Local** philosophy, all processing happens on your machine:
-
-* **100% Privacy Guaranteed**: Your files never leave your computer. Processing is done locally via JavaScript.
-* **Instant Performance**: No upload or download wait times. Rename thousands of files in milliseconds.
-* **Safe & Secure**: Ideal for sensitive documents, private photos, or internal company files.
-* **Zero Cost**: No limits on file count or size, no registration, and no hidden fees.
+This tool is built for users who need a fast, simple **bulk file renamer online** with a focus on speed, privacy, and ease of use.
 
 
-## Powerful Features for Organized Workflows
+## Browser-Based Bulk File Renaming (No Upload Required)
 
-Our tool offers flexible rules to handle any renaming logic you need:
+Unlike many online file renaming tools, this **bulk rename tool runs entirely in your browser** using JavaScript.
 
-### 1. Custom Prefix & Suffix
-Add specific text to the beginning or end of your filenames. Perfect for adding dates (e.g., `2024_`) or status tags (e.g., `_Final`) to entire folders at once.
+- Files are **not uploaded to any server**
+- No backend processing
+- No file storage or logging
 
-### 2. Intelligent Auto-Numbering
-Turn a chaotic list into an ordered sequence. You can enable numbering to add increments (e.g., `_01`, `_02`) to the end of each file, ensuring perfect chronological or alphabetical order.
-
-### 3. Real-time Live Preview
-See your changes before they happen. As you type your Prefix or Suffix, the "New Name" column updates instantly. This eliminates errors and ensures your files look exactly how you want them.
+This makes it suitable for users searching for **rename files online without uploading** or **client-side bulk file renamer**.
 
 
-## How to Rename Files in Bulk
+## Bulk File Renamer Features
 
-*  **Select Files**: Drag and drop your files into the workspace or click to browse.
-*  **Apply Rules**: Enter your desired Prefix, Suffix, or enable numbering.
-*  **Download ZIP**: Click **"Apply & Download ZIP"** to get all your renamed files packaged in a single, convenient archive.
+### Add Prefix to Multiple Files
+Add custom text to the beginning of multiple filenames at once.
+
+Common use cases:
+- Adding dates or timestamps
+- Adding project or folder identifiers
+- Standardizing file naming conventions
+
+Example:  `image.jpg → 2024_image.jpg`
+
+
+### Add Suffix to File Names
+Append text to the end of filenames while preserving the original file extension.
+
+Useful for:
+- Version labeling
+- Status indicators such as `_final` or `_edited`
+
+Example:  `report.pdf → report_final.pdf`
+
+
+### Auto Numbering for Batch Rename
+Automatically add sequential numbers when renaming files in bulk.
+
+- Sequential numbering
+- Keeps original file extensions
+- Helps maintain file order
+
+Example:  `photo.jpg → photo_01.jpg, photo_02.jpg`
+
+
+### Live Preview Before Renaming
+Preview filename changes in real time before applying them.
+
+- View original and new filenames
+- Reduce errors when renaming many files
+
+
+## How to Use the Bulk File Renamer
+
+1. Select or drag and drop multiple files into the tool  
+2. Enter a prefix, suffix, or enable numbering  
+3. Review the preview of renamed files  
+4. Click **Apply & Download ZIP** to download the renamed files
+
+Renamed files are packaged into a ZIP file. Original files on your device remain unchanged.
+
+
+## Works with All File Types
+
+The tool works with all file formats, including:
+- Image files (JPG, PNG, WEBP)
+- Documents (PDF, DOCX, XLSX)
+- Videos, audio files, and archives
+
 
 ## Frequently Asked Questions
 
-**Is there a limit on the number of files?**
-The only limit is your computer's memory (RAM). You can typically process hundreds of files simultaneously without any lag.
+**Is there a limit on the number of files?**  
+Limits depend on browser memory. For most use cases, hundreds of files can be renamed at once.
 
-**Does this work on all file types?**
-Yes! You can rename images, documents, videos, or any other file format. Our tool handles them all.
+**Are files uploaded to a server?**  
+No. All renaming is done directly in the browser.
 
-**What happens to my original files?**
-Nothing. Our tool creates copies with the new names and packages them into a ZIP. Your original files on your hard drive remain untouched until you decide to replace them with the new ones.
+**Are original files modified?**  
+No. The tool creates renamed copies for download.
+
+
+## Simple and Fast Bulk File Renaming Online
+
+This tool is designed for users who need:
+- A bulk file renamer online
+- Batch renaming directly in the browser
+- No file uploads
+- No software installation
+
+**Bulk File Renamer** focuses on one task: fast and reliable batch file renaming.
