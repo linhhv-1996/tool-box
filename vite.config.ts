@@ -11,6 +11,7 @@ export default defineConfig({
 		}
 	},
 	optimizeDeps: {
-		exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+		exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
+		include: ['@webav/av-canvas']
 	}
 });

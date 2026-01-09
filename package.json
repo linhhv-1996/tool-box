@@ -30,9 +30,12 @@
 		"@ffmpeg/ffmpeg": "^0.12.15",
 		"@ffmpeg/util": "^0.12.2",
 		"@neslinesli93/qpdf-wasm": "^0.3.0",
+		"@webav/av-canvas": "^1.2.7",
+		"@webav/av-cliper": "^1.2.7",
 		"heic2any": "^0.0.4",
 		"jszip": "^3.10.1",
 		"lucide-svelte": "^0.562.0",
+		"mp4-muxer": "^5.2.2",
 		"pdf-lib": "^1.17.1",
 		"pdfjs-dist": "^5.4.530",
 		"qpdf-wasm": "^0.1.0"
