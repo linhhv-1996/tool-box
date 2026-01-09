@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { browser } from '$app/environment';
-  import { Loader2, Settings2, FileVideo, Zap, AlertCircle, ShieldCheck } from 'lucide-svelte';
+  import { Loader2, Settings2, ShieldCheck, Zap } from 'lucide-svelte';
   import { FFmpeg } from '@ffmpeg/ffmpeg';
   import { fetchFile, toBlobURL } from '@ffmpeg/util';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
   import SuccessState from '$lib/components/SuccessState.svelte';
+  // @ts-ignore
   import Content from '$lib/content/video-compress.md';
 
   // --- STATE (Svelte 5) ---
@@ -18,17 +19,28 @@
   let error = $state("");
   
   let file = $state<File | null>(null);
+  let quality = $state("balanced"); // options: small, balanced, high
   let resultUrl = $state<string | null>(null);
   let resultSize = $state(0);
   let resultFileName = $state("");
 
-  const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB limit for browser stability
+  const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
   const toolInfo = allTools.find((t) => t.id === 'compress-video')!;
   const related = allTools.filter((t) => t.id !== 'compress-video' && t.id !== 'video-to-gif').slice(0, 6);
 
   onMount(async () => {
     if (browser) {
       await loadFFmpeg();
+    }
+  });
+
+  onDestroy(() => {
+    if (ffmpeg) {
+      try {
+        ffmpeg.terminate(); // Giải phóng bộ nhớ khi chuyển trang hoặc F5
+      } catch (e) {
+        console.error("FFmpeg termination error:", e);
+      }
     }
   });
 
@@ -47,16 +59,25 @@
     }
   }
 
+  function formatBytes(bytes: number) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]; // Đồng bộ format với tool PDF
+  }
+
   function handleFiles(files: File[]) {
     const selected = files[0];
     if (selected.size > MAX_FILE_SIZE) {
-      error = "File too large. Maximum size is 100MB for browser processing.";
+      error = "File too large. Maximum size is 200MB for stable browser processing.";
       file = null;
       return;
     }
     file = selected;
     resultUrl = null;
     error = "";
+    progress = 0;
   }
 
   async function startCompression() {
@@ -65,38 +86,55 @@
     error = "";
     progress = 0;
 
+    const inputName = 'input.mp4';
+    const outputName = 'output.mp4';
+
     ffmpeg.on('progress', ({ progress: p }) => {
       progress = Math.round(p * 100);
     });
 
     try {
-      const inputName = 'input.mp4';
-      const outputName = 'output.mp4';
       await ffmpeg.writeFile(inputName, await fetchFile(file));
 
-      // SMART LOGIC: 
-      // 1. scale='min(1280,iw)':-2 -> Downscales to 720p ONLY if input is larger. 
-      // 2. -crf 28 -> Balanced quality vs size.
-      // 3. -preset veryfast -> Fast encoding for better UX/Ad retention.
-      await ffmpeg.exec([
-        '-i', inputName,
-        '-vf', "scale='min(1280,iw)':-2", 
+      // Cấu hình dựa trên lựa chọn của người dùng
+      let crf = "26";
+      let vf = "scale='min(1280,iw)':-2"; // Balanced: Max 720p
+
+      if (quality === "small") {
+        crf = "32"; // Nén mạnh hơn
+        vf = "scale='min(854,iw)':-2"; // Thu nhỏ về 480p
+      } else if (quality === "high") {
+        crf = "20"; // Chất lượng cao, file nặng hơn
+        vf = ""; // Giữ nguyên độ phân giải gốc
+      }
+
+      const execArgs = ['-i', inputName];
+      if (vf) execArgs.push('-vf', vf);
+      
+      execArgs.push(
         '-vcodec', 'libx264',
-        '-crf', '28', 
+        '-crf', crf, 
         '-preset', 'veryfast',
         '-acodec', 'aac', 
         '-b:a', '128k',
         '-movflags', 'faststart',
         outputName
-      ]);
+      );
+
+      await ffmpeg.exec(execArgs);
 
       const data = await ffmpeg.readFile(outputName);
       const blob = new Blob([data as any], { type: 'video/mp4' });
       resultUrl = URL.createObjectURL(blob);
       resultSize = blob.size;
       resultFileName = `compressed_${file.name.split('.')[0]}.mp4`;
+
+      // Dọn dẹp hệ thống file ảo để tránh tràn bộ nhớ trình duyệt
+      await ffmpeg.deleteFile(inputName);
+      await ffmpeg.deleteFile(outputName);
+
     } catch (e: any) {
-      error = "Compression error: " + e.message;
+      error = "Compression error: " + (e.message || "The process was interrupted.");
     } finally {
       isProcessing = false;
     }
@@ -106,11 +144,27 @@
     file = null;
     resultUrl = null;
     progress = 0;
+    error = "";
   }
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} - Fast Online Video Compressor</title>
+  <title>{toolInfo.name} - Fast & Private Online Video Compressor</title>
+  <meta name="description" content="Reduce video file size locally in your browser. No server uploads, 100% private and secure. Supports MP4, MOV, and WebM using FFmpeg technology." />
+  <meta property="og:title" content="{toolInfo.name} - JustLocalTools" />
+  <meta property="og:description" content="Compress videos without compromising privacy. All processing happens on your device." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Video Compressor",
+    "url": "https://justlocaltools.com/compress-video",
+    "description": "Compress video files locally in your browser using FFmpeg WASM.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
@@ -130,18 +184,39 @@
           {#if file}
             <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
               <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
-                <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">Input File</span>
-                <button onclick={reset} class="text-[10px] font-mono uppercase underline hover:text-red-500">Remove</button>
+                <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">Selected Video</span>
+                <button onclick={reset} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">Remove</button>
               </div>
 
-              <div class="py-3 flex justify-between items-center font-mono mb-8">
-                <span class="text-[12px] font-bold truncate pr-4">{file.name}</span>
-                <span class="text-[9px] text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100 italic shrink-0">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                </span>
+              <div class="py-3 flex justify-between items-center gap-4 font-mono border-b border-slate-50 mb-10">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                  <span class="text-[12px] text-[#1a1a1a] truncate font-bold shrink grow-0" title={file.name}>{file.name}</span>
+                  <span class="text-[9px] text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100 whitespace-nowrap">
+                    {formatBytes(file.size)}
+                  </span>
+                </div>
               </div>
 
-              <div class="mb-8 p-5 bg-slate-50 border border-slate-100 rounded-sm space-y-6">
+              <div class="mb-10">
+                <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-3">Compression Level</label>
+                <div class="flex gap-2">
+                  {#each [
+                    { id: 'small', label: 'Small File', desc: '480p - High compression' },
+                    { id: 'balanced', label: 'Balanced', desc: '720p - Standard' },
+                    { id: 'high', label: 'High Quality', desc: 'Original Res - Low compression' }
+                  ] as q}
+                    <button 
+                      onclick={() => quality = q.id} 
+                      class="flex-1 py-3 border font-mono text-[11px] uppercase transition-all {quality === q.id ?
+                      'border-black bg-black text-white' : 'border-slate-200 text-slate-400 hover:border-slate-400'}"
+                    >
+                      {q.label}
+                    </button>
+                  {/each}
+                </div>
+              </div>
+
+              <!-- <div class="mb-8 p-5 bg-slate-50 border border-slate-100 rounded-sm space-y-6">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <Settings2 size={14} class="text-slate-400" />
@@ -156,12 +231,14 @@
                   <div class="flex items-start gap-3 bg-white p-3 border border-slate-200 rounded-sm">
                     <ShieldCheck size={14} class="text-blue-500 mt-0.5" />
                     <div class="flex flex-col">
-                      <span class="text-[10px] font-bold uppercase tracking-tight">Smart Resize Enabled</span>
-                      <p class="text-[9px] text-slate-400 leading-relaxed font-mono italic">Input > 720p will be capped. Smaller videos remain unchanged to prevent quality loss.</p>
+                      <span class="text-[10px] font-bold uppercase tracking-tight">Privacy Guaranteed</span>
+                      <p class="text-[9px] text-slate-400 leading-relaxed font-mono italic">
+                        Processing occurs 100% on your device. No video data ever reaches our servers.
+                      </p>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <button 
                 onclick={startCompression}
@@ -172,10 +249,10 @@
                   <Loader2 class="animate-spin mr-2" size={16} /> 
                   Compressing {progress}%
                 {:else}
-                  Start Compression
+                  {resultUrl ? 'Convert Again' : 'Start Compression'}
                 {/if}
               </button>
-              
+
               {#if error}
                 <p class="mt-4 text-[10px] font-mono text-red-500 uppercase text-center font-bold tracking-widest">{error}</p>
               {/if}
@@ -185,7 +262,7 @@
                   <SuccessState 
                     type="file"
                     title="Compression Complete" 
-                    subTitle="Your video has been optimized locally for web use."
+                    subTitle="Your video has been successfully optimized for web use."
                     file={{ name: resultFileName, size: resultSize, url: resultUrl }}
                     onReset={reset}
                   />
@@ -201,7 +278,7 @@
       </article>
     </div>
 
-    <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0 lg:pl-10">
+    <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0">
       <div class="sticky top-8">
         <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-6 pb-2 border-b border-slate-100">Related Tools</h3>
         <div class="flex flex-col gap-y-6 mb-12">
@@ -211,13 +288,6 @@
               <span class="text-[10px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
             </a>
           {/each}
-        </div>
-
-        <div class="bg-slate-50 border border-slate-100 aspect-[300/600] flex flex-col items-center justify-center p-6 text-center">
-          <span class="text-[9px] font-mono text-slate-300 uppercase tracking-[0.3em] mb-4">Advertisement</span>
-          <div class="w-full h-full bg-slate-100/50 rounded-sm border border-dashed border-slate-200 flex items-center justify-center text-slate-300 text-[10px] italic px-4">
-            Monetize your tool traffic here.
-          </div>
         </div>
       </div>
     </aside>
