@@ -121,23 +121,41 @@
   }
 </script>
 
+
 <svelte:head>
-  <title>Free Image to PDF Converter Online - 100% Private & Fast</title>
-  <meta name="description" content="Convert JPG, PNG, and WebP images to PDF online for free. No file uploads, no server storage. Combine and reorder images into a single PDF privately." />
-  <meta property="og:title" content="Free Image to PDF Converter Online - JustLocalTools" />
-  <meta property="og:description" content="Convert images to PDF privately on your device. Fast, free, and no installation required." />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Image to PDF Converter",
-    "url": "https://justlocaltools.com/image-to-pdf",
-    "description": "Convert and reorder images into a single PDF document locally in your browser.",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-  }
-  </script>
+  <title>{toolInfo.name} - Convert Images to PDF Online & Offline Free</title>
+  
+  <meta name="description" content="Convert JPG, PNG, WebP, and BMP images to PDF directly in your browser. Securely combine and reorder multiple images into a single PDF without uploading to any server." />
+  <meta name="keywords" content="image to pdf, convert jpg to pdf, png to pdf converter, webp to pdf, combine images to pdf, browser-based pdf creator, no upload pdf converter, secure image to pdf" />
+  <link rel="canonical" href="https://justlocaltools.com/image-to-pdf" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/image-to-pdf" />
+  <meta property="og:title" content="{toolInfo.name} - 100% Private & No Uploads" />
+  <meta property="og:description" content="Turn your photos, scans, and documents into high-quality PDFs instantly. Your images stay on your device for total privacy." />
+
+  {@html `<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "${toolInfo.name}",
+      "operatingSystem": "Any",
+      "applicationCategory": "MultimediaApplication",
+      "description": "A secure browser-based tool to combine and convert multiple images into a single PDF document locally.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Client-side PDF generation",
+        "Drag and drop page reordering",
+        "Support for JPG, PNG, WebP, BMP",
+        "No file size limits",
+        "Fit to A4 or Original size"
+      ]
+    }
+  </script>`}
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

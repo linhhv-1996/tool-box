@@ -103,7 +103,38 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
+  <title>{toolInfo.name} | Convert HEIC to JPG/PNG Online & Offline</title>
+  
+  <meta name="description" content="Convert iPhone HEIC photos to JPG or PNG directly in your browser. 100% private, client-side processing - your images never leave your device." />
+  <meta name="keywords" content="heic to jpg, convert heic to png, apple photo converter, iphone images to jpeg, browser-based heic converter, bulk heic conversion" />
+  <link rel="canonical" href="https://justlocaltools.com/heic-to-jpg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/heic-to-jpg" />
+  <meta property="og:title" content="{toolInfo.name} - Private & Fast Conversion" />
+  <meta property="og:description" content="Securely convert your HEIC photos to JPG or PNG format without uploading to any server." />
+
+  {@html `<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "${toolInfo.name}",
+      "operatingSystem": "Any",
+      "applicationCategory": "MultimediaApplication",
+      "description": "A browser-based tool to convert HEIC images to JPG or PNG format locally.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Client-side processing",
+        "No server uploads",
+        "Batch conversion support",
+        "JPG and PNG output"
+      ]
+    }
+  </script>`}
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

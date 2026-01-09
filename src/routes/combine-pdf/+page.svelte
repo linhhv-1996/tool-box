@@ -74,23 +74,41 @@
   }
 </script>
 
+
 <svelte:head>
-  <title>Merge PDF Files Online - Combine PDF Locally & Securely</title>
-  <meta name="description" content="Combine multiple PDF documents into one single file instantly. Your files never leave your computer. 100% private, free, and secure PDF merger." />
-  <meta property="og:title" content="Merge PDF Files Online - JustLocalTools" />
-  <meta property="og:description" content="Combine PDF documents privately on your device. No server uploads, no privacy risks." />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Combine PDF Files",
-    "url": "https://justlocaltools.com/combine-pdf",
-    "description": "Merge multiple PDF documents into one single file locally.",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-  }
-  </script>
+  <title>{toolInfo.name} - Combine PDF Files Online & Locally Free</title>
+  
+  <meta name="description" content="Combine multiple PDF files into a single document directly in your browser. 100% private with client-side merging—no server uploads, no file size limits, and no privacy risks." />
+  <meta name="keywords" content="merge pdf online, combine pdf without upload, secure pdf merger, client-side pdf joiner, lossless pdf merge, free pdf binder, join pdf files privately" />
+  <link rel="canonical" href="https://justlocaltools.com/combine-pdf" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/combine-pdf" />
+  <meta property="og:title" content="{toolInfo.name} - Private & Lossless PDF Merging" />
+  <meta property="og:description" content="Merge your sensitive PDF documents securely on your device. High-performance browser-based processing ensures your data never leaves your computer." />
+
+  {@html `<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "${toolInfo.name}",
+      "operatingSystem": "Any",
+      "applicationCategory": "BusinessApplication",
+      "description": "A secure browser-based tool to combine multiple PDF documents into one single file locally without server uploads.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Client-side PDF merging",
+        "No server-side uploads",
+        "Lossless quality preservation",
+        "No artificial file size limits",
+        "Works offline after initial load"
+      ]
+    }
+  </script>`}
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

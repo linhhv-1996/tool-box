@@ -99,24 +99,43 @@
   }
 </script>
 
+
 <svelte:head>
-  <title>Protect PDF with Password Online - Secure Your Documents</title>
-  <meta name="description" content="Encrypt your PDF documents with a strong password. Add security to your files without uploading them to any server. 100% local and private." />
-  <meta property="og:title" content="Protect PDF Online - JustLocalTools" />
-  <meta property="og:description" content="Add a password to secure your documents privately on your device." />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Protect PDF",
-    "url": "https://justlocaltools.com/protect-pdf",
-    "description": "Add a password to secure your documents locally in your browser.",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-  }
-  </script>
+  <title>{toolInfo.name} - Password Protect PDF Online (100% Private)</title>
+  
+  <meta name="description" content="Secure your PDF files with strong 256-bit AES encryption directly in your browser. No server uploads, no file tracking—your documents and passwords never leave your device." />
+  <meta name="keywords" content="protect pdf with password, encrypt pdf online, secure pdf documents, 256-bit aes pdf encryption, lock pdf without upload, client-side pdf security, private pdf protection" />
+  <link rel="canonical" href="https://justlocaltools.com/protect-pdf" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/protect-pdf" />
+  <meta property="og:title" content="{toolInfo.name} - Secure AES-256 Encryption" />
+  <meta property="og:description" content="Add a secure password to your PDF files privately on your device. Fast, free, and industry-standard encryption without any server interaction." />
+
+  {@html `<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "${toolInfo.name}",
+      "operatingSystem": "Any",
+      "applicationCategory": "SecurityApplication",
+      "description": "A browser-based security tool to encrypt and password-protect PDF documents locally using 256-bit AES encryption.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "256-bit AES Encryption",
+        "Client-side processing",
+        "No server uploads",
+        "Compatible with all PDF readers",
+        "No file size limits"
+      ]
+    }
+  </script>`}
 </svelte:head>
+
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
   <div class="flex flex-col lg:flex-row lg:justify-between">

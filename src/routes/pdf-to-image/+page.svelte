@@ -115,23 +115,41 @@
   }
 </script>
 
+
 <svelte:head>
-  <title>Free PDF to Image Converter - High Quality JPG & PNG</title>
-  <meta name="description" content="Convert PDF pages into high-quality JPG or PNG images instantly. No file size limits, no server uploads. Your privacy is our priority." />
-  <meta property="og:title" content="PDF to Image Converter - JustLocalTools" />
-  <meta property="og:description" content="Convert PDF pages to images privately. Choose between JPG or PNG output directly on your device." />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "PDF to Image Converter",
-    "url": "https://justlocaltools.com/pdf-to-image",
-    "description": "Convert PDF pages into JPG or PNG images locally in your browser.",
-    "applicationCategory": "MultimediaApplication",
-    "operatingSystem": "Any",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-  }
-  </script>
+  <title>{toolInfo.name} - High-Quality PDF to JPG/PNG Online & Offline</title>
+  
+  <meta name="description" content="Convert PDF pages into high-quality JPG or PNG images directly in your browser. 100% private with client-side rendering—no file uploads, no limits, and no waiting." />
+  <meta name="keywords" content="pdf to image, convert pdf to jpg, pdf to png converter, high resolution pdf to image, browser-based pdf renderer, secure pdf conversion, extract images from pdf" />
+  <link rel="canonical" href="https://justlocaltools.com/pdf-to-image" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/pdf-to-image" />
+  <meta property="og:title" content="{toolInfo.name} - 100% Secure & High Resolution" />
+  <meta property="og:description" content="Extract sharp images from your PDF pages privately. Choose between JPG or PNG with adjustable resolution (up to 3x scale) without uploading any data." />
+
+  {@html `<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "${toolInfo.name}",
+      "operatingSystem": "Any",
+      "applicationCategory": "MultimediaApplication",
+      "description": "A secure browser-based tool to render and convert PDF pages into high-resolution JPG or PNG images locally.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Client-side PDF rendering",
+        "Adjustable scale options (1x, 2x, 3x)",
+        "JPG and PNG output formats",
+        "No server-side uploads",
+        "No page count or file size limits"
+      ]
+    }
+  </script>`}
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

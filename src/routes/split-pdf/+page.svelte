@@ -125,22 +125,39 @@
 </script>
 
 <svelte:head>
-  <title>Split PDF Online - Extract Pages Privately & Free</title>
-  <meta name="description" content="Extract specific pages or split your PDF into multiple documents instantly. Completely local tool ensures your data stays on your device." />
-  <meta property="og:title" content="Split PDF Online - JustLocalTools" />
-  <meta property="og:description" content="Split PDF files and extract pages privately. Fast, free, and no file uploads required." />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Split PDF",
-    "url": "https://justlocaltools.com/split-pdf",
-    "description": "Extract or split pages from a PDF file locally in your browser.",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-  }
-  </script>
+  <title>{toolInfo.name} - Extract PDF Pages Privately & Free Online</title>
+  
+  <meta name="description" content="Extract specific pages or split your PDF into multiple separate documents instantly. A 100% private, browser-based tool that ensures your sensitive files never leave your device." />
+  <meta name="keywords" content="split pdf, extract pdf pages, online pdf splitter, secure pdf extraction, split pdf without upload, browser-based pdf splitter, pdf page extractor, separate pdf pages" />
+  <link rel="canonical" href="https://justlocaltools.com/split-pdf" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/split-pdf" />
+  <meta property="og:title" content="{toolInfo.name} - Secure & Flexible Page Extraction" />
+  <meta property="og:description" content="Split your PDF files into individual pages or specific ranges privately. Fast, free, and no file uploads required for maximum document security." />
+
+  {@html `<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "${toolInfo.name}",
+      "operatingSystem": "Any",
+      "applicationCategory": "BusinessApplication",
+      "description": "A secure browser-based tool to split, extract, and reorganize PDF pages locally without uploading files to a server.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Client-side PDF splitting",
+        "Flexible range selection (e.g., 1-5, 8, 10-12)",
+        "Instant ZIP archive generation",
+        "No server-side uploads",
+        "Works on desktop and mobile"
+      ]
+    }
+  </script>`}
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

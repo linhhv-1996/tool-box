@@ -103,22 +103,39 @@
 </script>
 
 <svelte:head>
-  <title>Unlock PDF Password Online - Remove Restrictions Locally</title>
-  <meta name="description" content="Remove passwords and restrictions from secured PDF files locally in your browser. No server upload, keeping your sensitive documents safe." />
-  <meta property="og:title" content="Unlock PDF Online - JustLocalTools" />
-  <meta property="og:description" content="Remove PDF passwords and restrictions privately on your device." />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Unlock PDF",
-    "url": "https://justlocaltools.com/unlock-pdf",
-    "description": "Remove password protection from PDFs locally without uploading files.",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Any",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-  }
-  </script>
+  <title>{toolInfo.name} - Remove PDF Password & Restrictions Online Free</title>
+  
+  <meta name="description" content="Unlock your PDF files and remove passwords or printing/editing restrictions directly in your browser. 100% private, client-side decryption ensures your documents and passwords never leave your device." />
+  <meta name="keywords" content="unlock pdf, remove pdf password, pdf restriction remover, online pdf unlocker, secure pdf decryption, unlock pdf without upload, browser-based pdf unlocker, remove pdf print protection" />
+  <link rel="canonical" href="https://justlocaltools.com/unlock-pdf" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/unlock-pdf" />
+  <meta property="og:title" content="{toolInfo.name} - Instant & Private PDF Decryption" />
+  <meta property="og:description" content="Gaining full access to your PDF files privately. Remove open passwords and usage restrictions locally on your device without any server-side processing." />
+
+  {@html `<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "${toolInfo.name}",
+      "operatingSystem": "Any",
+      "applicationCategory": "BusinessApplication",
+      "description": "A secure browser-based tool to remove passwords and security restrictions from PDF documents locally.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Client-side PDF decryption",
+        "Remove open passwords",
+        "Remove printing and editing restrictions",
+        "No server-side uploads",
+        "Instant local processing"
+      ]
+    }
+  </script>`}
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
