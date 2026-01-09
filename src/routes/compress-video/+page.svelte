@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import { browser } from '$app/environment';
-  import { Loader2, Settings2, ShieldCheck, Zap, FileVideo, CheckCircle2, AlertCircle, Download, Trash2 } from 'lucide-svelte';
+  import { Loader2, Settings2, ShieldCheck, Zap, FileVideo, CheckCircle2, AlertCircle, Download, Trash2, X } from 'lucide-svelte';
   import { FFmpeg } from '@ffmpeg/ffmpeg';
   import { fetchFile, toBlobURL } from '@ffmpeg/util';
   import JSZip from 'jszip';
@@ -27,7 +27,6 @@
   let isProcessing = $state(false);
   let overallProgress = $state(0);
   let error = $state("");
-  
   let videoQueue = $state<VideoFile[]>([]);
   let quality = $state("balanced"); 
   let batchZipUrl = $state<string | null>(null);
@@ -97,6 +96,18 @@
     batchZipUrl = null;
   }
 
+  function removeFile(index: number) {
+    if (isProcessing) return;
+    const item = videoQueue[index];
+    if (item.resultUrl) {
+      URL.revokeObjectURL(item.resultUrl);
+    }
+    videoQueue = videoQueue.filter((_, i) => i !== index);
+    if (videoQueue.length === 0) {
+      batchZipUrl = null;
+    }
+  }
+
   async function startBatchCompression() {
     if (videoQueue.length === 0 || !ffmpeg || !isLoaded) return;
     isProcessing = true;
@@ -119,8 +130,14 @@
 
         let crf = "26";
         let vf = "scale='min(1280,iw)':-2"; // Balanced: Capped at 720p
-        if (quality === "small") { crf = "32"; vf = "scale='min(854,iw)':-2"; }
-        else if (quality === "high") { crf = "20"; vf = ""; }
+
+        if (quality === "small") { 
+          crf = "32";
+          vf = "scale='min(854,iw)':-2"; 
+        } else if (quality === "high") { 
+          crf = "20";
+          vf = ""; 
+        }
 
         const args = ['-i', inputName];
         if (vf) args.push('-vf', vf);
@@ -130,7 +147,7 @@
 
         const data = await ffmpeg.readFile(outputName);
         const blob = new Blob([data as any], { type: 'video/mp4' });
-        
+
         // Lưu kết quả riêng cho từng file để download lẻ
         item.resultUrl = URL.createObjectURL(blob);
         item.resultSize = blob.size;
@@ -148,7 +165,6 @@
       const zipContent = await zip.generateAsync({ type: "blob" });
       batchZipUrl = URL.createObjectURL(zipContent);
       batchZipSize = zipContent.size;
-
     } catch (e: any) {
       error = "An error occurred: " + e.message;
     } finally {
@@ -187,6 +203,7 @@
       <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
       <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
+       
         {#if !isLoaded}
           <div class="flex flex-col items-center py-12">
             <Loader2 class="animate-spin text-slate-300 mb-4" size={32} />
@@ -196,6 +213,7 @@
           <Dropzone onfiles={handleFiles} multiple={true} accept="video/*" />
 
           {#if videoQueue.length > 0}
+   
             <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
               <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
                 <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">Processing Queue ({videoQueue.length})</span>
@@ -232,6 +250,16 @@
                         <span class="text-[10px] font-mono font-bold text-blue-500">{item.progress}%</span>
                       {:else if item.status === 'pending'}
                         <span class="text-[9px] font-mono text-slate-300 uppercase italic">Waiting</span>
+                      {/if}
+
+                      {#if !isProcessing && item.status !== 'processing'}
+                        <button 
+                          onclick={() => removeFile(i)}
+                          class="p-1 hover:bg-slate-200 rounded-full text-slate-400 hover:text-red-500 transition-colors"
+                          title="Remove file"
+                        >
+                          <X size={14} />
+                        </button>
                       {/if}
                     </div>
                   </div>
@@ -285,7 +313,7 @@
                 <div class="mt-6 pt-6 border-t border-dashed border-slate-100">
                   <SuccessState 
                     type="file" 
-                    title="All Done!" 
+                    title="All Done!"
                     subTitle="Videos are compressed. You can download them individually above or the full batch below."
                     file={{ name: `compressed_bundle.zip`, size: batchZipSize, url: batchZipUrl }}
                     onReset={reset}
