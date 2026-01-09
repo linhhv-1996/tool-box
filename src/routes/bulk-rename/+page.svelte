@@ -114,7 +114,30 @@
 </script>
 
 <svelte:head>
-  <title>{toolInfo.name} | JUSTLOCALTOOLS_</title>
+  <title>{toolInfo.name} - Privacy-First Bulk File Renamer</title>
+  <meta name="description" content="Rename multiple files instantly in your browser. Powerful pattern matching without server uploads. 100% private and secure." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/bulk-rename" />
+  <meta property="og:title" content="{toolInfo.name} - Privacy-First Bulk File Renamer" />
+  <meta property="og:description" content="Batch rename files locally in your browser. No files are ever uploaded to any server." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Bulk File Renamer",
+    "url": "https://justlocaltools.com/bulk-rename",
+    "description": "A browser-based tool to rename multiple files at once using patterns and replacement rules.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">

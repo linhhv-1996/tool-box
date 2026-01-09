@@ -184,6 +184,12 @@
 <svelte:head>
   <title>{toolInfo.name} - Batch Video Compressor (Privacy-First)</title>
   <meta name="description" content="Compress multiple videos locally in your browser. Download individually or as a ZIP. 100% private, no server uploads." />
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/compress-video" />
+  <meta property="og:title" content="{toolInfo.name} - Secure Browser-Based Video Compression" />
+  <meta property="og:description" content="Compress your videos locally without uploading to any server. Fast, free, and private." />
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",

@@ -125,7 +125,33 @@
 </script>
 
 <svelte:head>
-  <title>Compress PDF Online - Bulk & Secure PDF Reducer</title>
+  <title>{toolInfo.name} - Compress PDF Online (100% Private)</title>
+  <meta name="description" content="Reduce PDF file size locally in your browser without uploading to any server. Fast, secure, and 100% private PDF compression tool." />
+  <link rel="canonical" href="https://justlocaltools.com/compress-pdf" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://justlocaltools.com/compress-pdf" />
+  <meta property="og:title" content="{toolInfo.name} - Reduce PDF File Size Online" />
+  <meta property="og:description" content="Compress PDF files locally in your browser. No server uploads, 100% private and secure." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Compress PDF",
+    "url": "https://justlocaltools.com/compress-pdf",
+    "description": "Reduce PDF file size locally in your browser. No server uploads, 100% private.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "permissions": "None (Processed locally)"
+  }
+  </script>
 </svelte:head>
 
 <div class="max-w-[980px] mx-auto px-0 py-12">
