@@ -30,29 +30,70 @@
   @apply transition-all duration-300 ease-out;
 }
 
+
 /* 3. MARKDOWN FORMATTING (PROSE) */
 .prose {
-  @apply text-sm leading-relaxed text-slate-600 font-sans;
+  @apply text-sm leading-6 text-slate-600 font-sans;
+}
+
+/* Khử margin-top của thẻ đầu tiên trong bài viết để tránh hở hông với Divider */
+.prose > :first-child {
+  margin-top: 0 !important;
 }
 
 .prose h1, .prose h2, .prose h3 {
-  @apply font-mono font-bold uppercase tracking-tighter text-black mt-10 mb-2;
+  @apply font-mono font-bold uppercase tracking-tight text-black mb-3;
 }
 
-.prose h1 { @apply text-2xl border-b border-slate-100 pb-2 mb-4; } 
-.prose h2 { @apply text-xl border-b border-slate-50 pb-1 mb-3; }
-.prose h3 { @apply text-base; }
+.prose h1 { 
+  @apply text-2xl border-b border-slate-100 pb-2 mt-10; 
+} 
 
-.prose p { @apply mb-4; }
+.prose h2 { 
+  @apply text-lg border-b border-slate-50 pb-1 mt-8; 
+}
+
+/* Thẻ h3: Siết mt để text không rời rạc */
+.prose h3 { 
+  @apply text-sm mt-6 mb-2; 
+  color: #1a1a1a;
+}
+
+.prose p { 
+  @apply mb-3; /* Giảm mb-4 xuống mb-3 để các đoạn văn liền mạch hơn */
+}
 
 .prose ul {
-  @apply list-disc list-inside mb-6 space-y-1 text-slate-500;
+  @apply list-disc list-inside mb-5 space-y-1 text-slate-500;
 }
 
 .prose strong {
-  @apply text-black font-semibold;
+  @apply text-black font-bold;
 }
 
 .prose code {
-  @apply bg-slate-50 px-1.5 py-0.5 rounded font-mono text-[12px] text-black border border-slate-100;
+  @apply bg-slate-50 px-1.5 py-0.5 rounded font-mono text-[11px] text-black border border-slate-100;
+}
+
+/* CUSTOM SCROLLBAR (Gộp lại 1 chỗ cho sạch) */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar { 
+  width: 4px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-track { 
+  background: transparent; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb { 
+  background: #e2e8f0; 
+  border-radius: 10px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+  background: #cbd5e1; 
 }

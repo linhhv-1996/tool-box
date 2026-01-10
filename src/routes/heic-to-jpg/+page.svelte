@@ -1,40 +1,28 @@
 <script lang="ts">
   // @ts-nocheck
-  // import heic2any from 'heic2any';
-
-  import JSZip from 'jszip';
-  import { Loader2, X } from 'lucide-svelte';
+  import { Loader2, Image as ImageIcon, Trash2, FileImage, AlertCircle, Settings2 } from 'lucide-svelte';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
   import SuccessState from '$lib/components/SuccessState.svelte';
-  // @ts-ignore
   import Content from '$lib/content/heic-to-jpg.md';
-
-  import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-
-  let heic2any: any = $state(null);
-
-  onMount(async () => {
-    if (browser) {
-      // Chỉ load thư viện khi đã ở phía client
-      const module = await import('heic2any');
-      // heic2any thường export default hoặc đôi khi cần .default tùy version
-      heic2any = module.default || module;
-    }
-  });
+  import JSZip from 'jszip';
 
   const toolInfo = allTools.find((t) => t.id === 'heic-to-jpg')!;
-  const related = allTools.filter((t) => t.id !== 'heic-to-jpg').slice(0, 6);
+  const related = allTools.filter((t) => t.id !== 'heic-to-jpg' && t.id !== 'image-to-pdf').slice(0, 5);
 
+  // --- STATE ---
   let files = $state<File[]>([]);
   let isProcessing = $state(false);
-  let convertedImages = $state<{ url: string; name: string }[]>([]);
-  let format = $state("jpeg"); // Mặc định là jpeg (JPG)
-  let zipUrl = $state<string | null>(null);
-  let zipSize = $state(0);
+  let progress = $state({ current: 0, total: 0 });
+  let error = $state("");
+  let resultUrl = $state<string | null>(null);
   let resultFileName = $state("");
+  let resultSize = $state(0);
+  
+  // Thêm lựa chọn định dạng, mặc định là jpeg (JPG)
+  let outputFormat = $state("jpeg");
 
   function formatBytes(bytes: number) {
     if (bytes === 0) return '0 B';
@@ -45,44 +33,59 @@
   }
 
   function handleFiles(newFiles: File[]) {
-    const valid = newFiles.filter(f => f.name.toLowerCase().endsWith('.heic') || f.name.toLowerCase().endsWith('.heif'));
-    files = [...files, ...valid];
-    zipUrl = null;
+    error = "";
+    resultUrl = null;
+    const validFiles = newFiles.filter(f => 
+      f.name.toLowerCase().endsWith('.heic') || f.name.toLowerCase().endsWith('.heif')
+    );
+    
+    if (validFiles.length === 0) {
+      error = "Please select valid HEIC/HEIF files.";
+      return;
+    }
+    files = [...files, ...validFiles];
   }
 
   async function convertAction() {
-    if (files.length === 0) return;
+    if (files.length === 0 || !browser) return;
     isProcessing = true;
-    convertedImages = [];
-    zipUrl = null;
-
+    error = "";
+    progress = { current: 0, total: files.length };
+    
     try {
+      const heic2any = (await import('heic2any')).default;
       const zip = new JSZip();
-      const targetType = format === 'png' ? 'image/png' : 'image/jpeg';
-      const extension = format === 'png' ? '.png' : '.jpg';
-      
+      const ext = outputFormat === 'jpeg' ? 'jpg' : 'png';
+
       for (const file of files) {
-        const blob = await heic2any({
+        progress.current++;
+        // Chuyển đổi HEIC sang định dạng đã chọn
+        const convertedBlob = await heic2any({
           blob: file,
-          toType: targetType,
+          toType: `image/${outputFormat}`,
           quality: 0.9
         });
 
-        const resultBlob = Array.isArray(blob) ? blob[0] : blob;
-        const url = URL.createObjectURL(resultBlob);
-        const newName = file.name.replace(/\.(heic|heif)$/i, extension);
-        
-        convertedImages.push({ url, name: newName });
-        zip.file(newName, resultBlob);
+        if (files.length === 1) {
+          resultSize = convertedBlob.size;
+          resultFileName = `${file.name.split('.')[0]}.${ext}`;
+          if (resultUrl) URL.revokeObjectURL(resultUrl);
+          resultUrl = URL.createObjectURL(convertedBlob);
+        } else {
+          zip.file(`${file.name.split('.')[0]}.${ext}`, convertedBlob);
+        }
       }
 
-      const zipContent = await zip.generateAsync({ type: "blob" });
-      zipSize = zipContent.size;
-      resultFileName = `converted_${Date.now()}.zip`;
-      zipUrl = URL.createObjectURL(zipContent);
-
+      if (files.length > 1) {
+        const zipContent = await zip.generateAsync({ type: "blob" });
+        resultSize = zipContent.size;
+        resultFileName = `converted_images_${Date.now()}.zip`;
+        if (resultUrl) URL.revokeObjectURL(resultUrl);
+        resultUrl = URL.createObjectURL(zipContent);
+      }
     } catch (e) {
-      console.error("Conversion failed", e);
+      console.error(e);
+      error = "Conversion failed. Some HEIC files might be corrupted.";
     } finally {
       isProcessing = false;
     }
@@ -90,15 +93,16 @@
 
   function reset() {
     files = [];
-    convertedImages.forEach(img => URL.revokeObjectURL(img.url));
-    convertedImages = [];
-    zipUrl = null;
-    zipSize = 0;
+    resultUrl = null;
+    resultSize = 0;
+    error = "";
+    progress = { current: 0, total: 0 };
   }
 
   function removeFile(index: number) {
     files = files.filter((_, i) => i !== index);
-    zipUrl = null;
+    resultUrl = null;
+    if (files.length === 0) reset();
   }
 </script>
 
@@ -126,59 +130,63 @@
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
-      },
-      "featureList": [
-        "Client-side processing",
-        "No server uploads",
-        "Batch conversion support",
-        "JPG and PNG output"
-      ]
+      }
     }
   </script>`}
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-0 py-12">
-  <div class="flex flex-col lg:flex-row lg:justify-between">
-    
-    <div class="w-full lg:w-[640px] shrink-0">
-      <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
+<div class="max-w-[980px] mx-auto px-4 py-6 md:py-10 text-left">
+  <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
-      <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
-        <Dropzone onfiles={handleFiles} accept=".heic,.heif" />
+  <div class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-8">
+    <main class="min-w-0">
+      <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
+        
+        <Dropzone 
+          onfiles={handleFiles} 
+          hasFiles={files.length > 0} 
+          onClear={reset} 
+          accept=".heic,.heif"
+          multiple={true}
+          label="Select HEIC/HEIF files"
+        />
 
         {#if files.length > 0}
-          <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
-            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
-              <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
-                Selected HEIC Files ({files.length})
-              </span>
-              <button onclick={reset} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">
-                Clear all
-              </button>
+          <div class="mt-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div class="mb-6 border border-slate-100 rounded-sm overflow-hidden bg-slate-50/50">
+              <div class="px-4 py-2 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-slate-500 uppercase">Queue ({files.length})</span>
+              </div>
+              <ul class="divide-y divide-slate-100 max-h-[200px] overflow-y-auto custom-scrollbar">
+                {#each files as f, i}
+                  <li class="px-4 py-2.5 flex items-center justify-between gap-3 bg-white group hover:bg-slate-50 transition-colors">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                      <FileImage size={14} class="text-slate-300 shrink-0" />
+                      <span class="text-[12px] font-medium text-black truncate block leading-tight" title={f.name}>
+                        {f.name}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0 ml-2">
+                      <span class="text-[9px] font-mono text-slate-400 uppercase whitespace-nowrap bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
+                        {formatBytes(f.size)}
+                      </span>
+                      <button onclick={() => removeFile(i)} 
+                        class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-100 transition-all rounded-sm shrink-0">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </li>
+                {/each}
+              </ul>
             </div>
 
-            <ul class="divide-y divide-slate-50 mb-8 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
-              {#each files as file, i}
-                <li class="py-3 flex justify-between items-center gap-4 group font-mono">
-                  <div class="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                    <span class="text-[10px] text-slate-300 shrink-0">{(i+1).toString().padStart(2,'0')}</span>
-                    <span class="text-[12px] text-[#1a1a1a] truncate grow tracking-tighter">{file.name}</span>
-                    <span class="text-[9px] text-slate-400 uppercase shrink-0 bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100">{formatBytes(file.size)}</span>
-                  </div>
-                  <button onclick={() => removeFile(i)} class="text-slate-300 hover:text-black p-1 transition-colors">
-                    <X size={14} />
-                  </button>
-                </li>
-              {/each}
-            </ul>
-
-            <div class="mb-8">
-              <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-3">Output Format</label>
+            <div class="bg-slate-50/50 p-5 border border-slate-100 rounded-sm mb-6">
+              <label class="block font-mono text-[10px] font-bold uppercase text-slate-500 mb-3 tracking-widest">Output Format</label>
               <div class="flex gap-2">
                 {#each ['jpeg', 'png'] as f}
                   <button 
-                    onclick={() => format = f} 
-                    class="flex-1 py-3 border font-mono text-[11px] uppercase transition-all {format === f ? 'border-black bg-black text-white' : 'border-slate-200 text-slate-400 hover:border-slate-400'}"
+                    onclick={() => outputFormat = f} 
+                    class="flex-1 py-2 border font-mono text-[10px] uppercase transition-all {outputFormat === f ? 'border-black bg-black text-white' : 'border-slate-200 bg-white text-slate-400 hover:border-slate-400 rounded-sm'}"
                   >
                     {f === 'jpeg' ? 'JPG' : 'PNG'}
                   </button>
@@ -189,51 +197,73 @@
             <button 
               onclick={convertAction}
               disabled={isProcessing}
-              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] 
-                     hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
+              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
             >
               {#if isProcessing}
-                <Loader2 class="animate-spin mr-2" size={16} /> Converting...
+                <Loader2 class="animate-spin mr-2" size={16} /> 
+                Converting {progress.current}/{progress.total}...
               {:else}
-                Convert to {format.toUpperCase()}
+                <ImageIcon size={14} class="mr-2" /> Convert to {outputFormat === 'jpeg' ? 'JPG' : 'PNG'}
               {/if}
             </button>
 
-            {#if zipUrl && !isProcessing}
-              <SuccessState 
-                type="preview"
-                title="Conversion Ready" 
-                subTitle="Successfully converted {files.length} HEIC files to {format.toUpperCase()}." 
-                file={{ name: resultFileName, size: zipSize, url: zipUrl }}
-                previews={convertedImages.map(img => ({ url: img.url, label: img.name }))}
-                onReset={reset}
-                mainActionLabel="Download ZIP"
-              />
+            {#if resultUrl && !isProcessing}
+              <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
+                <SuccessState 
+                  title="Conversion Complete" 
+                  file={{ 
+                    name: resultFileName, 
+                    size: resultSize, 
+                    url: resultUrl 
+                  }}
+                  onReset={reset}
+                />
+                
+                <!-- <div class="mt-6 p-5 bg-slate-50 border border-slate-100 rounded-sm text-center">
+                    <p class="text-[9px] font-mono text-slate-400 uppercase mb-3 tracking-widest">Sponsored Content</p>
+                    <div class="h-16 flex items-center justify-center text-blue-600 font-bold text-sm cursor-pointer hover:underline decoration-blue-200">
+                        [ Demo: Professional Image Optimizer - Try for free ]
+                    </div>
+                </div> -->
+
+              </div>
             {/if}
+          </div>
+        {/if}
+
+        {#if error}
+          <div class="mt-4 p-3 bg-red-50 border border-red-100 text-red-600 text-[10px] font-mono font-bold uppercase flex items-center gap-2">
+            <AlertCircle size={14} /> {error}
           </div>
         {/if}
       </div>
 
-      <article class="prose mt-16 border-t border-slate-100 pt-12">
+      <article class="prose max-w-none pt-10 border-t border-slate-100 text-left">
         <Content />
       </article>
-    </div>
+    </main>
 
-    <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0">
-      <div class="sticky top-8">
-        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-6 pb-2 border-b border-slate-100">
-          Related Tools
-        </h3>
-        <div class="flex flex-col gap-y-6">
-          {#each related as r}
-            <a href={r.href} class="group block">
-              <span class="font-bold block group-hover:underline text-[#1a1a1a] transition-all underline-offset-2 leading-tight">{r.name}</span>
-              <span class="text-[10px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
-            </a>
-          {/each}
+    <aside>
+      <div class="sticky top-6 space-y-8">
+
+        <div class="bg-white border border-slate-100 p-5 rounded-sm shadow-sm">
+          <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-slate-50 text-left">Related Tools</h3>
+          <div class="space-y-4 text-left">
+            {#each related as r}
+              <a href={r.href} class="group block">
+                <span class="text-xs font-bold block group-hover:text-black text-slate-700 transition-colors underline-offset-2 group-hover:underline leading-tight">{r.name}</span>
+                <span class="text-[10px] text-slate-400 font-mono uppercase block mt-1 line-clamp-1">{r.desc}</span>
+              </a>
+            {/each}
+          </div>
         </div>
       </div>
     </aside>
-
   </div>
 </div>
+
+<style>
+  :global(.prose h2) { margin-top: 1.5rem !important; }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>

@@ -1,10 +1,7 @@
 <script lang="ts">
-
-  // import createModule from '@neslinesli93/qpdf-wasm';
-
+  // @ts-nocheck
   import qpdfWasmUrl from '@neslinesli93/qpdf-wasm/dist/qpdf.wasm?url';
-
-  import { Eye, EyeOff, Lock, Loader2 } from 'lucide-svelte';
+  import { Eye, EyeOff, Lock, Loader2, FileText, ShieldCheck, AlertCircle } from 'lucide-svelte';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
@@ -14,8 +11,8 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
 
+  // --- LOGIC WASM & PROTECT ---
   let createModule = $state<any>(null);
-
   onMount(async () => {
     if (browser) {
       const module = await import('@neslinesli93/qpdf-wasm');
@@ -24,7 +21,7 @@
   });
 
   const toolInfo = allTools.find((t) => t.id === 'protect-pdf')!;
-  const related = allTools.filter((t) => t.id !== 'protect-pdf').slice(0, 6);
+  const related = allTools.filter((t) => t.id !== 'protect-pdf').slice(0, 5);
 
   let file = $state<File | null>(null);
   let password = $state("");
@@ -99,7 +96,6 @@
   }
 </script>
 
-
 <svelte:head>
   <title>{toolInfo.name} - Password Protect PDF Online (100% Private)</title>
   
@@ -124,136 +120,124 @@
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
-      },
-      "featureList": [
-        "256-bit AES Encryption",
-        "Client-side processing",
-        "No server uploads",
-        "Compatible with all PDF readers",
-        "No file size limits"
+      } file size limits"
       ]
     }
   </script>`}
 </svelte:head>
 
+<div class="max-w-[980px] mx-auto px-4 py-6 md:py-10">
+  <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
-<div class="max-w-[980px] mx-auto px-0 py-12">
-  <div class="flex flex-col lg:flex-row lg:justify-between">
+  <div class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-8">
     
-    <div class="w-full lg:w-[640px] shrink-0">
-      <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
+    <main class="min-w-0">
+      <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
+        
+        <Dropzone 
+          accept=".pdf"
+          multiple={false}
+          hasFiles={!!file}
+          onfiles={handleFiles}
+          onClear={reset}
+          label="Select PDF File to Protect"
+        />
 
-      <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
-        <Dropzone onfiles={handleFiles} multiple={false} />
+        {#if file }
+          <div class="mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div class="flex items-center gap-3 p-4 bg-slate-50 border border-slate-100 rounded-sm mb-6">
+              <div class="w-10 h-10 bg-white border border-slate-200 flex items-center justify-center text-slate-400">
+                <FileText size={18} />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[12px] font-bold text-black truncate leading-tight">{file.name}</p>
+                <p class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">{formatBytes(file.size)}</p>
+              </div>
+            </div>
 
-        {#if file}
-          <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
-            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
-              <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
-                Target Document
-              </span>
-              <button onclick={reset} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">
-                Remove
+            <div class="space-y-4">
+              <div>
+                <label for="pw" class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1.5 ml-1">
+                  Document Password:
+                </label>
+                <div class="relative group">
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-black transition-colors">
+                    <Lock size={14} />
+                  </div>
+                  <input 
+                    id="pw"
+                    type={showPassword ? "text" : "password"} 
+                    bind:value={password}
+                    placeholder="Set a strong password..."
+                    class="w-full h-12 pl-10 pr-12 bg-white border border-slate-200 font-mono text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all rounded-sm"
+                  />
+                  <button 
+                    type="button"
+                    onclick={() => showPassword = !showPassword}
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-black transition-colors"
+                  >
+                    {#if showPassword} <EyeOff size={16} /> {:else} <Eye size={16} /> {/if}
+                  </button>
+                </div>
+              </div>
+
+              <button 
+                onclick={protectAction}
+                disabled={isProcessing || !password}
+                class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
+              >
+                {#if isProcessing}
+                  <Loader2 class="animate-spin mr-2" size={16} /> Encrypting...
+                {:else}
+                  <ShieldCheck size={16} class="mr-2" /> Protect PDF Now
+                {/if}
               </button>
             </div>
+          </div>
+        {/if}
 
-            <div class="py-3 flex justify-between items-center gap-4 font-mono border-b border-slate-50 mb-10">
-                <div class="flex items-center gap-3 min-w-0 flex-1">
-                    <span class="text-[12px] text-[#1a1a1a] truncate font-bold shrink grow-0">{file.name}</span>
-                    <span class="text-[9px] text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100 whitespace-nowrap">
-                        {formatBytes(file.size)}
-                    </span>
-                </div>
-            </div>
+        {#if protectedUrl && !isProcessing}
+          <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
+            <SuccessState 
+              title="Protection Success"
+              file={{ name: resultFileName, size: fileSize, url: protectedUrl }}
+              onReset={reset}
+            />
+          </div>
+        {/if}
 
-            <div class="mb-10 flex flex-col items-center">
-                <div class="w-full max-w-full">
-                    <label for="pw" class="block font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-3">
-                        Set Document Password
-                    </label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-black transition-colors">
-                            <Lock size={14} />
-                        </div>
-                        <input 
-                            id="pw"
-                            type={showPassword ? "text" : "password"} 
-                            bind:value={password}
-                            placeholder="Enter a strong password..."
-                            class="w-full h-11 pl-10 pr-12 bg-white border border-slate-200 font-mono text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all rounded-sm placeholder:text-slate-300"
-                        />
-                        <button 
-                            type="button"
-                            onclick={() => showPassword = !showPassword}
-                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-black transition-colors"
-                        >
-                            {#if showPassword}
-                                <EyeOff size={16} />
-                            {:else}
-                                <Eye size={16} />
-                            {/if}
-                        </button>
-                    </div>
-                    <p class="mt-3 text-[10px] text-slate-400 font-mono">
-                        This password will be required to open the PDF. Processing is done locally in your browser.
-                    </p>
-                </div>
-            </div>
-
-            <button 
-              onclick={protectAction}
-              disabled={isProcessing || !password}
-              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] 
-                     hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
-            >
-              {#if isProcessing}
-                <Loader2 class="animate-spin mr-2" size={16} /> Encrypting Locally...
-              {:else}
-                Protect PDF
-              {/if}
-            </button>
-            
-            {#if error}
-              <p class="mt-4 text-[10px] font-mono text-red-500 uppercase text-center font-bold tracking-widest">{error}</p>
-            {/if}
-
-            {#if protectedUrl && !isProcessing}
-              <SuccessState 
-                type="file"
-                title="Protection Complete" 
-                subTitle="Your PDF has been encrypted with 256-bit AES security." 
-                file={{ 
-                  name: resultFileName, 
-                  size: fileSize, 
-                  url: protectedUrl 
-                }}
-                onReset={reset}
-              />
-            {/if}
+        {#if error}
+          <div class="mt-4 p-3 bg-red-50 border border-red-100 text-red-600 text-[10px] font-mono font-bold uppercase flex items-center gap-2">
+            <AlertCircle size={14} /> {error}
           </div>
         {/if}
       </div>
 
-      <article class="prose mt-16 border-t border-slate-100 pt-12">
+
+      <article class="prose max-w-none pt-10 border-t border-slate-100">
         <Content />
       </article>
-    </div>
+    </main>
 
-    <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0">
-      <div class="sticky top-8">
-        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-6 pb-2 border-b border-slate-100">
-          Related Tools
-        </h3>
-        <div class="flex flex-col gap-y-6">
-          {#each related as r}
-            <a href={r.href} class="group block">
-              <span class="font-bold block group-hover:underline text-[#1a1a1a] transition-all underline-offset-2 leading-tight">{r.name}</span>
-              <span class="text-[10px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
-            </a>
-          {/each}
+    <aside>
+      <div class="sticky top-6 space-y-8">
+
+        <div class="bg-white border border-slate-100 p-5 rounded-sm shadow-sm">
+          <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-slate-50">Related Tools</h3>
+          <div class="space-y-4">
+            {#each related as r}
+              <a href={r.href} class="group block">
+                <span class="text-xs font-bold block group-hover:text-black text-slate-700 transition-colors underline-offset-2 group-hover:underline leading-tight">{r.name}</span>
+                <span class="text-[10px] text-slate-400 font-mono uppercase block mt-1 line-clamp-1">{r.desc}</span>
+              </a>
+            {/each}
+          </div>
         </div>
       </div>
     </aside>
-
   </div>
 </div>
+
+<style>
+  :global(.prose h2) { margin-top: 1.5rem !important; }
+</style>

@@ -1,35 +1,27 @@
 <script lang="ts">
   // @ts-nocheck
-  // import * as pdfjs from 'pdfjs-dist';
-  // import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
-
   import JSZip from 'jszip';
-  import { Loader2 } from 'lucide-svelte';
-  
+  import { Loader2, FileText, Image as ImageIcon, Settings2 } from 'lucide-svelte';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
   import SuccessState from '$lib/components/SuccessState.svelte';
-  // @ts-ignore
   import Content from '$lib/content/pdf-to-image.md';
-
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
 
+  // --- LOGIC GỐC (GIỮ NGUYÊN) ---
   let pdfjs: any = $state(null);
-
   onMount(async () => {
     if (browser) {
-      // Load thư viện động chỉ ở phía client
       pdfjs = await import('pdfjs-dist');
       const worker = await import('pdfjs-dist/build/pdf.worker.mjs?url');
       pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
     }
   });
 
-  // pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
   const toolInfo = allTools.find((t) => t.id === 'pdf-to-image')!;
-  const related = allTools.filter((t) => t.id !== 'pdf-to-image').slice(0, 6);
+  const related = allTools.filter((t) => t.id !== 'pdf-to-image').slice(0, 5);
 
   let file = $state<File | null>(null);
   let isProcessing = $state(false);
@@ -38,7 +30,6 @@
   let images = $state<{url: string, page: number}[]>([]);
   let format = $state("png");
   let scale = $state(2);
-  
   let zipUrl = $state<string | null>(null);
   let zipSize = $state(0);
   let resultFileName = $state("");
@@ -54,7 +45,6 @@
   async function handleFiles(newFiles: File[]) {
     const pdf = newFiles.find((f) => f.type === "application/pdf");
     if (!pdf) return;
-    
     reset();
     file = pdf;
     const arrayBuffer = await file.arrayBuffer();
@@ -69,7 +59,6 @@
     images = [];
     zipUrl = null;
     zipSize = 0;
-
     try {
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
@@ -79,25 +68,20 @@
         progress = Math.round((i / totalPages) * 100);
         const page = await pdf.getPage(i);
         const viewport = page.getViewport({ scale });
-        
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         canvas.height = viewport.height;
         canvas.width = viewport.width;
-
         await page.render({ canvasContext: context, viewport }).promise;
-        
         const dataUrl = canvas.toDataURL(`image/${format}`, 0.9);
         images.push({ url: dataUrl, page: i });
         const base64Data = dataUrl.split(',')[1];
         zip.file(`page-${i}.${format}`, base64Data, {base64: true});
       }
-
       const content = await zip.generateAsync({type: "blob"});
       zipSize = content.size;
       resultFileName = `${file.name.replace('.pdf', '')}_images.zip`;
       zipUrl = URL.createObjectURL(content);
-
     } catch (e) {
       console.error(e);
     } finally {
@@ -114,7 +98,6 @@
     totalPages = 0;
   }
 </script>
-
 
 <svelte:head>
   <title>{toolInfo.name} - High-Quality PDF to JPG/PNG Online & Offline</title>
@@ -140,73 +123,63 @@
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
-      },
-      "featureList": [
-        "Client-side PDF rendering",
-        "Adjustable scale options (1x, 2x, 3x)",
-        "JPG and PNG output formats",
-        "No server-side uploads",
-        "No page count or file size limits"
-      ]
+      }
     }
   </script>`}
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-0 py-12">
-  <div class="flex flex-col lg:flex-row lg:justify-between">
-    
-    <div class="w-full lg:w-[640px] shrink-0">
-      <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
+<div class="max-w-[980px] mx-auto px-4 py-6 md:py-10">
+  <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
-      <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
-        <Dropzone onfiles={handleFiles} multiple={false} />
+
+  <div class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-8">
+    <main class="min-w-0">
+      <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
+        
+        <Dropzone 
+          accept=".pdf"
+          multiple={false}
+          hasFiles={!!file}
+          onfiles={handleFiles}
+          onClear={reset}
+          label="Select PDF File to Convert"
+        />
 
         {#if file}
-          <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
-            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4">
-              <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
-                Selected Document
-              </span>
-              <button onclick={reset} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">
-                Remove
-              </button>
-            </div>
-
-            <div class="py-3 flex justify-between items-center gap-4 font-mono border-b border-slate-50 mb-10">
-                <div class="flex items-center gap-3 min-w-0 flex-1">
-                    <span class="text-[12px] text-[#1a1a1a] truncate font-bold shrink grow-0" title={file.name}>
-                        {file.name}
-                    </span>
-                    <span class="text-[9px] text-slate-400 uppercase bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100 whitespace-nowrap">
-                        {formatBytes(file.size)}
-                    </span>
-                    <span class="text-[9px] text-black font-bold uppercase bg-slate-100 px-1.5 py-0.5 rounded-sm border border-slate-200 whitespace-nowrap">
-                        {totalPages} Pages
-                    </span>
+          <div class="mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-sm mb-6">
+              <div class="flex items-center gap-3 min-w-0">
+                <FileText size={18} class="text-slate-400" />
+                <div class="flex flex-col min-w-0">
+                  <span class="text-[12px] font-bold text-black truncate leading-tight">{file.name}</span>
+                  <span class="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">
+                    {formatBytes(file.size)} • {totalPages} Pages
+                  </span>
                 </div>
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-              <div>
-                <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-3">Format</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="bg-slate-50/50 p-4 border border-slate-100 rounded-sm">
+                <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-3 tracking-widest">Format</label>
                 <div class="flex gap-2">
                   {#each ['png', 'jpeg'] as f}
                     <button 
                       onclick={() => format = f} 
-                      class="flex-1 py-3 border font-mono text-[11px] uppercase transition-all {format === f ? 'border-black bg-black text-white' : 'border-slate-200 text-slate-400 hover:border-slate-400'}"
+                      class="flex-1 py-2 border font-mono text-[10px] uppercase transition-all {format === f ? 'border-black bg-black text-white' : 'border-slate-200 bg-white text-slate-400 hover:border-slate-400'}"
                     >
                       {f === 'jpeg' ? 'JPG' : 'PNG'}
                     </button>
                   {/each}
                 </div>
               </div>
-              <div>
-                <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-3">DPI / Quality</label>
+              <div class="bg-slate-50/50 p-4 border border-slate-100 rounded-sm">
+                <label class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-3 tracking-widest">Quality (DPI)</label>
                 <div class="flex gap-2">
                   {#each [1, 2, 3] as s}
                     <button 
                       onclick={() => scale = s} 
-                      class="flex-1 py-3 border font-mono text-[11px] transition-all {scale === s ? 'border-black bg-black text-white' : 'border-slate-200 text-slate-400 hover:border-slate-400'}"
+                      class="flex-1 py-2 border font-mono text-[10px] transition-all {scale === s ? 'border-black bg-black text-white' : 'border-slate-200 bg-white text-slate-400 hover:border-slate-400'}"
                     >
                       {s}x
                     </button>
@@ -218,55 +191,55 @@
             <button 
               onclick={convertAction} 
               disabled={isProcessing} 
-              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] 
-                     hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
+              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
             >
               {#if isProcessing} 
                 <Loader2 class="animate-spin mr-2" size={16} /> Rendering {progress}%... 
               {:else} 
+                <ImageIcon size={16} class="mr-2" /> 
                 {images.length > 0 ? 'Convert Again' : 'Convert PDF to Images'} 
               {/if}
             </button>
+          </div>
+        {/if}
 
-            {#if zipUrl && !isProcessing}
-              <SuccessState 
-                type="preview" 
-                title="Conversion Successful" 
-                subTitle="{images.length} pages are ready as high-quality images." 
-                file={{ 
-                  name: resultFileName, 
-                  size: zipSize, 
-                  url: zipUrl 
-                }}
-                previews={images.map(img => ({ url: img.url, label: `Page ${img.page}` }))}
-                mainActionLabel="Download ZIP"
-                onReset={reset}
-              />
-            {/if}
+        {#if zipUrl && !isProcessing}
+          <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
+            <SuccessState 
+              title="Conversion Done" 
+              file={{ name: resultFileName, size: zipSize, url: zipUrl }}
+              onReset={reset}
+            />
+            
+            
           </div>
         {/if}
       </div>
 
-      <article class="prose mt-16 border-t border-slate-100 pt-12">
+      <article class="prose max-w-none pt-10 border-t border-slate-100 text-left">
         <Content />
       </article>
-    </div>
+    </main>
 
-    <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0">
-      <div class="sticky top-8">
-        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-6 pb-2 border-b border-slate-100">
-          Related Tools
-        </h3>
-        <div class="flex flex-col gap-y-6">
-          {#each related as r}
-            <a href={r.href} class="group block">
-              <span class="font-bold block group-hover:underline text-[#1a1a1a] transition-all underline-offset-2 leading-tight">{r.name}</span>
-              <span class="text-[10px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
-            </a>
-          {/each}
+    <aside>
+      <div class="sticky top-6 space-y-8">
+
+        <div class="bg-white border border-slate-100 p-5 rounded-sm shadow-sm">
+          <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-slate-50 text-left">Related Tools</h3>
+          <div class="space-y-4 text-left">
+            {#each related as r}
+              <a href={r.href} class="group block">
+                <span class="text-xs font-bold block group-hover:text-black text-slate-700 transition-colors underline-offset-2 group-hover:underline leading-tight">{r.name}</span>
+                <span class="text-[10px] text-slate-400 font-mono uppercase block mt-1 line-clamp-1">{r.desc}</span>
+              </a>
+            {/each}
+          </div>
         </div>
       </div>
     </aside>
-
   </div>
 </div>
+
+<style>
+  :global(.prose h2) { margin-top: 1.5rem !important; }
+</style>

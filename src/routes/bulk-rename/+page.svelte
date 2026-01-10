@@ -1,15 +1,15 @@
 <script lang="ts">
+  // @ts-nocheck
   import JSZip from 'jszip';
-  import { Loader2, X, ArrowRight, Trash2, CaseSensitive, Hash, Type, ArrowLeftRight } from 'lucide-svelte';
+  import { Loader2, X, ArrowRight, Trash2, CaseSensitive, Hash, Type, ArrowLeftRight, FileText, AlertCircle } from 'lucide-svelte';
   import { allTools } from '$lib/config/tools';
   import ToolLayout from '$lib/components/ToolLayout.svelte';
   import Dropzone from '$lib/components/Dropzone.svelte';
   import SuccessState from '$lib/components/SuccessState.svelte';
-  // @ts-ignore
   import Content from '$lib/content/bulk-rename.md';
 
   const toolInfo = allTools.find((t) => t.id === 'bulk-rename')!;
-  const related = allTools.filter((t) => t.id !== 'bulk-rename').slice(0, 6);
+  const related = allTools.filter((t) => t.id !== 'bulk-rename').slice(0, 5);
 
   // Types for Rules
   type RuleType = 'find-replace' | 'prefix-suffix' | 'numbering' | 'case';
@@ -19,16 +19,16 @@
     data: any;
   }
 
-  // State
+  // --- STATE ---
   let files = $state<File[]>([]);
   let isProcessing = $state(false);
+  let error = $state(""); // Đã thêm khai báo để fix lỗi ReferenceError
   let zipUrl = $state<string | null>(null);
   let zipSize = $state(0);
   let resultFileName = $state("");
-  
-  // Rules State
   let rules = $state<Rule[]>([]);
 
+  // --- HELPER FUNCTIONS ---
   function addRule(type: RuleType) {
     const id = Math.random().toString(36).substring(2, 9);
     let data = {};
@@ -36,7 +36,6 @@
     if (type === 'prefix-suffix') data = { prefix: '', suffix: '' };
     if (type === 'numbering') data = { start: 1, padding: 2 };
     if (type === 'case') data = { mode: 'lower' };
-    
     rules.push({ id, type, data });
   }
 
@@ -44,7 +43,36 @@
     rules = rules.filter(r => r.id !== id);
   }
 
-  // Logic Preview - Áp dụng tất cả rules theo thứ tự
+  function formatBytes(bytes: number) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  function handleFiles(newFiles: File[]) {
+    error = "";
+    files = [...files, ...newFiles];
+    if (rules.length === 0) addRule('prefix-suffix');
+    zipUrl = null;
+  }
+
+  function removeFile(index: number) {
+    files = files.filter((_, i) => i !== index);
+    zipUrl = null;
+    if (files.length === 0) reset();
+  }
+
+  function reset() {
+    files = [];
+    rules = [];
+    zipUrl = null;
+    zipSize = 0;
+    error = "";
+  }
+
+  // --- LOGIC PREVIEW ---
   let previewFiles = $derived(
     files.map((file, index) => {
       const ext = file.name.includes('.') ? file.name.split('.').pop() : '';
@@ -65,7 +93,6 @@
           else if (data.mode === 'title') name = name.replace(/\b\w/g, c => c.toUpperCase());
         }
       }
-
       return {
         original: file.name,
         new: ext ? `${name}.${ext}` : name
@@ -73,23 +100,11 @@
     })
   );
 
-  function formatBytes(bytes: number) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  }
-
-  function handleFiles(newFiles: File[]) {
-    files = [...files, ...newFiles];
-    if (rules.length === 0) addRule('prefix-suffix'); // Mặc định thêm 1 rule cho dễ hiểu
-    zipUrl = null;
-  }
-
+  // --- ACTION ---
   async function processAction() {
     if (files.length === 0) return;
     isProcessing = true;
+    error = "";
     try {
       const zip = new JSZip();
       previewFiles.forEach((item, i) => {
@@ -98,18 +113,13 @@
       const zipContent = await zip.generateAsync({ type: "blob" });
       zipSize = zipContent.size;
       resultFileName = `renamed_${Date.now()}.zip`;
+      if (zipUrl) URL.revokeObjectURL(zipUrl);
       zipUrl = URL.createObjectURL(zipContent);
     } catch (e) {
-      console.error("Renaming failed", e);
+      error = "Renaming failed. Please check your files.";
     } finally {
       isProcessing = false;
     }
-  }
-
-  function reset() {
-    files = [];
-    rules = [];
-    zipUrl = null;
   }
 </script>
 
@@ -140,133 +150,119 @@
   </script>
 </svelte:head>
 
-<div class="max-w-[980px] mx-auto px-0 py-12">
-  <div class="flex flex-col lg:flex-row lg:justify-between">
-    
-    <div class="w-full lg:w-[640px] shrink-0">
-      <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
+<div class="max-w-[980px] mx-auto px-4 py-6 md:py-10 text-left">
+  <ToolLayout title={toolInfo.name} description={toolInfo.desc} />
 
-      <div class="mt-10 bg-white border border-slate-200 p-6 md:p-10 rounded-sm shadow-sm">
-        <Dropzone onfiles={handleFiles} accept="*" />
+  <div class="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-8">
+    <main class="min-w-0">
+      <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
+        
+        <Dropzone 
+          onfiles={handleFiles} 
+          hasFiles={files.length > 0} 
+          onClear={reset} 
+          accept="*"
+          multiple={true}
+          label="Select Files to Rename"
+        />
 
         {#if files.length > 0}
-          <div class="mt-10 animate-in fade-in slide-in-from-bottom-2">
+          <div class="mt-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
             
-            <div class="mb-6">
-              <span class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-3 tracking-widest">Add Renaming Rule</span>
-              <div class="flex flex-wrap gap-2">
-                <button onclick={() => addRule('find-replace')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
+            <div class="mb-8">
+              <span class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-4 tracking-widest border-b border-slate-50 pb-2">Renaming Rules</span>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <button onclick={() => addRule('find-replace')} class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm">
                   <ArrowLeftRight size={12} /> Find & Replace
                 </button>
-                <button onclick={() => addRule('prefix-suffix')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
-                  <Type size={12} /> Prefix / Suffix
+                <button onclick={() => addRule('prefix-suffix')} class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm">
+                  <Type size={12} /> Prefix/Suffix
                 </button>
-                <button onclick={() => addRule('numbering')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
+                <button onclick={() => addRule('numbering')} class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm">
                   <Hash size={12} /> Numbering
                 </button>
-                <button onclick={() => addRule('case')} class="flex items-center gap-2 px-3 py-2 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white">
+                <button onclick={() => addRule('case')} class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm">
                   <CaseSensitive size={12} /> Change Case
                 </button>
               </div>
-            </div>
 
-            <div class="space-y-3 mb-10">
-              {#each rules as rule (rule.id)}
-                <div class="group relative bg-slate-50 border border-slate-100 p-4 rounded-sm animate-in slide-in-from-left-2 duration-200">
-                  <button 
-                    onclick={() => removeRule(rule.id)}
-                    class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-
-                  <div class="flex flex-col gap-3">
-                    <span class="text-[9px] font-bold font-mono uppercase text-slate-400 tracking-tighter">
-                      Rule: {rule.type.replace('-', ' ')}
-                    </span>
-
-                    {#if rule.type === 'find-replace'}
-                      <div class="grid grid-cols-2 gap-3">
-                        <input type="text" bind:value={rule.data.find} placeholder="Find..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
-                        <input type="text" bind:value={rule.data.replace} placeholder="Replace..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
-                      </div>
-                    {:else if rule.type === 'prefix-suffix'}
-                      <div class="grid grid-cols-2 gap-3">
-                        <input type="text" bind:value={rule.data.prefix} placeholder="Prefix..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
-                        <input type="text" bind:value={rule.data.suffix} placeholder="Suffix..." class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
-                      </div>
-                    {:else if rule.type === 'numbering'}
-                      <div class="flex gap-3">
-                        <div class="flex-1">
-                          <span class="text-[8px] uppercase text-slate-400 block mb-1">Start At</span>
-                          <input type="number" bind:value={rule.data.start} class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white"/>
+              <div class="space-y-3">
+                {#each rules as rule (rule.id)}
+                  <div class="relative bg-slate-50 border border-slate-100 p-4 rounded-sm animate-in slide-in-from-left-2 duration-200">
+                    <button onclick={() => removeRule(rule.id)} class="absolute top-3 right-3 text-slate-300 hover:text-red-500 transition-colors">
+                      <Trash2 size={14} />
+                    </button>
+                    <div class="flex flex-col gap-3">
+                      <span class="text-[9px] font-bold font-mono uppercase text-slate-400 tracking-widest">Rule: {rule.type.replace('-', ' ')}</span>
+                      
+                      {#if rule.type === 'find-replace'}
+                        <div class="grid grid-cols-2 gap-3">
+                          <input type="text" bind:value={rule.data.find} placeholder="Find..." class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"/>
+                          <input type="text" bind:value={rule.data.replace} placeholder="Replace..." class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"/>
                         </div>
-                        <div class="flex-1">
-                          <span class="text-[8px] uppercase text-slate-400 block mb-1">Padding</span>
-                          <select bind:value={rule.data.padding} class="w-full border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white h-[34px]">
-                            <option value={1}>1</option>
-                            <option value={2}>01</option>
-                            <option value={3}>001</option>
-                          </select>
+                      {:else if rule.type === 'prefix-suffix'}
+                        <div class="grid grid-cols-2 gap-3">
+                          <input type="text" bind:value={rule.data.prefix} placeholder="Prefix..." class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"/>
+                          <input type="text" bind:value={rule.data.suffix} placeholder="Suffix..." class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"/>
                         </div>
-                      </div>
-                    {:else if rule.type === 'case'}
-                      <div class="flex gap-2">
-                        {#each ['lower', 'upper', 'title'] as m}
-                          <button 
-                            onclick={() => rule.data.mode = m}
-                            class="flex-1 py-1.5 border text-[10px] font-mono uppercase transition-all {rule.data.mode === m ? 'bg-black text-white border-black' : 'bg-white text-slate-400 border-slate-200 hover:border-slate-400'}"
-                          >
-                            {m}
-                          </button>
-                        {/each}
-                      </div>
-                    {/if}
+                      {:else if rule.type === 'numbering'}
+                        <div class="flex gap-3">
+                          <div class="flex-1">
+                            <span class="text-[8px] uppercase text-slate-400 block mb-1 font-bold">Start At</span>
+                            <input type="number" bind:value={rule.data.start} class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"/>
+                          </div>
+                          <div class="flex-1">
+                            <span class="text-[8px] uppercase text-slate-400 block mb-1 font-bold">Padding</span>
+                            <select bind:value={rule.data.padding} class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm">
+                              <option value={1}>1</option>
+                              <option value={2}>01</option>
+                              <option value={3}>001</option>
+                            </select>
+                          </div>
+                        </div>
+                      {:else if rule.type === 'case'}
+                        <div class="flex gap-2">
+                          {#each ['lower', 'upper', 'title'] as m}
+                            <button onclick={() => rule.data.mode = m} class="flex-1 py-2 border text-[10px] font-mono uppercase transition-all {rule.data.mode === m ? 'bg-black text-white border-black' : 'bg-white text-slate-400 border-slate-200 hover:border-slate-400'} rounded-sm">{m}</button>
+                          {/each}
+                        </div>
+                      {/if}
+                    </div>
                   </div>
-                </div>
-              {/each}
-              
-              {#if rules.length === 0}
-                <div class="border-2 border-dashed border-slate-100 py-8 text-center rounded-sm">
-                  <p class="text-[10px] font-mono text-slate-300 uppercase tracking-widest">No rules added yet</p>
-                </div>
-              {/if}
+                {/each}
+              </div>
             </div>
 
-            <div class="flex justify-between items-end border-b border-slate-100 pb-2 mb-4 mt-12">
-              <span class="font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest">
-                Preview Changes ({files.length})
-              </span>
-              <button onclick={reset} class="text-[10px] font-mono uppercase underline underline-offset-4 decoration-slate-200 hover:text-red-500 transition-colors">
-                Clear all
-              </button>
-            </div>
-
-            <ul class="divide-y divide-slate-50 mb-8 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
-              {#each previewFiles as item, i}
-                <li class="py-4 flex justify-between items-center gap-4 group font-mono">
-                  <div class="flex items-center gap-4 min-w-0 flex-1">
-                    <span class="text-[10px] text-slate-300 shrink-0">{(i+1).toString().padStart(2,'0')}</span>
-                    <div class="flex flex-col min-w-0 flex-1">
-                      <span class="text-[10px] text-slate-400 truncate line-through mb-0.5">{item.original}</span>
-                      <div class="flex items-center gap-2 text-black">
-                        <ArrowRight size={10} class="text-slate-300 shrink-0" />
-                        <span class="text-[12px] font-bold truncate tracking-tighter">{item.new}</span>
+            <div class="mb-10">
+              <span class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-4 tracking-widest border-b border-slate-50 pb-2">Preview Changes</span>
+              <ul class="divide-y divide-slate-100 max-h-80 overflow-y-auto custom-scrollbar border border-slate-100 rounded-sm">
+                {#each previewFiles as item, i}
+                  <li class="px-4 py-3 flex items-center justify-between gap-3 bg-white group hover:bg-slate-50 transition-colors">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                      <span class="text-[10px] font-mono text-slate-300 shrink-0 leading-none">{(i+1).toString().padStart(2,'0')}</span>
+                      <div class="flex flex-col min-w-0 flex-1">
+                        <span class="text-[10px] text-slate-400 truncate line-through mb-1">{item.original}</span>
+                        <div class="flex items-center gap-2 text-black min-w-0">
+                          <ArrowRight size={10} class="text-slate-300 shrink-0" />
+                          <span class="text-[12px] font-bold truncate leading-tight tracking-tight" title={item.new}>{item.new}</span>
+                        </div>
                       </div>
                     </div>
-                    <span class="text-[9px] text-slate-400 uppercase shrink-0 bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100">{formatBytes(files[i].size)}</span>
-                  </div>
-                  <button onclick={() => {files = files.filter((_, idx) => idx !== i)}} class="text-slate-300 hover:text-black p-1 transition-colors">
-                    <X size={14} />
-                  </button>
-                </li>
-              {/each}
-            </ul>
+                    <div class="flex items-center gap-3 shrink-0 ml-2">
+                      <span class="text-[9px] font-mono text-slate-400 uppercase whitespace-nowrap bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{formatBytes(files[i].size)}</span>
+                      <button onclick={() => removeFile(i)} class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-100 transition-all rounded-sm shrink-0">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </li>
+                {/each}
+              </ul>
+            </div>
 
             <button 
               onclick={processAction}
               disabled={isProcessing || files.length === 0}
-              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-300 transition-all flex items-center justify-center shadow-lg"
+              class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
             >
               {#if isProcessing}
                 <Loader2 class="animate-spin mr-2" size={16} /> Packaging...
@@ -276,49 +272,52 @@
             </button>
 
             {#if zipUrl && !isProcessing}
-              <div class="mt-8">
+              <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
                 <SuccessState 
-                  type="file"
                   title="Files Renamed" 
-                  subTitle="Your {files.length} files are ready." 
                   file={{ name: resultFileName, size: zipSize, url: zipUrl }}
-                  previews={[]} 
                   onReset={reset}
-                  mainActionLabel="Download ZIP"
                 />
+                
+                
               </div>
             {/if}
           </div>
         {/if}
+
+        {#if error}
+          <div class="mt-4 p-3 bg-red-50 border border-red-100 text-red-600 text-[10px] font-mono font-bold uppercase flex items-center gap-2">
+            <AlertCircle size={14} /> {error}
+          </div>
+        {/if}
       </div>
 
-      <article class="prose mt-16 border-t border-slate-100 pt-12">
+      <article class="prose max-w-none pt-10 border-t border-slate-100">
         <Content />
       </article>
-    </div>
+    </main>
 
-    <aside class="w-full lg:w-[310px] shrink-0 mt-16 lg:mt-0">
-      <div class="sticky top-8">
-        <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-6 pb-2 border-b border-slate-100">
-          Related Tools
-        </h3>
-        <div class="flex flex-col gap-y-6">
-          {#each related as r}
-            <a href={r.href} class="group block">
-              <span class="font-bold block group-hover:underline text-[#1a1a1a] transition-all underline-offset-2 leading-tight">{r.name}</span>
-              <span class="text-[10px] text-slate-400 font-mono uppercase mt-1 block line-clamp-2 leading-relaxed">{r.desc}</span>
-            </a>
-          {/each}
+    <aside>
+      <div class="sticky top-6 space-y-8">
+
+        <div class="bg-white border border-slate-100 p-5 rounded-sm shadow-sm">
+          <h3 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-slate-50">Related Tools</h3>
+          <div class="space-y-4">
+            {#each related as r}
+              <a href={r.href} class="group block">
+                <span class="text-xs font-bold block group-hover:text-black text-slate-700 transition-colors underline-offset-2 group-hover:underline leading-tight">{r.name}</span>
+                <span class="text-[10px] text-slate-400 font-mono uppercase block mt-1 line-clamp-1">{r.desc}</span>
+              </a>
+            {/each}
+          </div>
         </div>
       </div>
     </aside>
-
   </div>
 </div>
 
 <style>
+  :global(.prose h2) { margin-top: 1.5rem !important; }
   .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 </style>
