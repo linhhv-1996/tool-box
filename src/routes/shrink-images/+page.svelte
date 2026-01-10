@@ -95,12 +95,12 @@
         });
 
         currentTotalOutputSize += finalBlob.size;
-        zip.file(`shrunk_${file.name}`, finalBlob);
+        zip.file(`shrink_${file.name}`, finalBlob);
       }
 
       const zipContent = await zip.generateAsync({ type: "blob" });
       resultSize = zipContent.size;
-      resultFileName = `shrunk_images_${Date.now()}.zip`;
+      resultFileName = `shrink_images_${Date.now()}.zip`;
       if (resultUrl) URL.revokeObjectURL(resultUrl);
       resultUrl = URL.createObjectURL(zipContent);
     } catch (e) {

@@ -148,7 +148,7 @@
 
         item.resultSize = finalData.length;
         item.isOptimized = !isBetter;
-        item.resultName = `shrunk_${item.file.name.split('.')[0]}.mp4`;
+        item.resultName = `shrink_${item.file.name.split('.')[0]}.mp4`;
         item.status = 'done';
 
         zip.file(item.resultName, finalData);
