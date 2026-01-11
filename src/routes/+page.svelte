@@ -59,8 +59,8 @@
                 <a href={tool.href} class="block px-3 py-2 hover:bg-slate-50 border-b border-slate-50 last:border-0 group">
                   <div class="flex justify-between items-center">
                     <div>
-                      <span class="text-[12px] font-bold block">{tool.name}</span>
-                      <p class="text-[10px] text-slate-400 uppercase font-mono">{tool.desc}</p>
+                      <span class="text-[12px] font-bold block">{tool.name.en}</span>
+                      <p class="text-[10px] text-slate-400 uppercase font-mono">{tool.desc.en}</p>
                     </div>
                     <ArrowRight size={14} class="text-slate-200 group-hover:text-black" />
                   </div>
@@ -81,7 +81,7 @@
         <div class="mb-6 flex items-baseline gap-2 border-b-2 border-black pb-2">
           <span class="font-mono text-[10px] font-bold text-white bg-black px-1.5 py-0.5">{category.id}</span>
           <h2 class="font-mono uppercase text-[12px] font-bold tracking-widest text-black">
-            {category.title}
+            {category.title.en}
           </h2>
         </div>
 
@@ -90,10 +90,10 @@
             <li class="group/item">
               <a href={tool.href} class="block border-l-2 border-transparent hover:border-slate-200 pl-3 transition-all">
                 <span class="text-[14px] font-bold text-black block leading-none group-hover/item:underline decoration-slate-300 underline-offset-2">
-                  {tool.name}
+                  {tool.name.en}
                 </span>
                 <span class="text-[12px] text-slate-500 leading-snug mt-1.5 block opacity-70 group-hover/item:opacity-100 transition-opacity font-mono">
-                  {tool.desc}
+                  {tool.desc.en}
                 </span>
               </a>
             </li>
