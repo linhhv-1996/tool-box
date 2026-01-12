@@ -1,5 +1,6 @@
 <script lang="ts">
-  import SEO from '$lib/components/SEO.svelte';
+  import BlogSEO from '$lib/components/BlogSEO.svelte';
+import SEO from '$lib/components/SEO.svelte';
   import { onMount, tick } from 'svelte'; // Thêm tick để đợi DOM render xong
   let { data } = $props();
   
@@ -32,7 +33,7 @@
 </script>
 
 
-<SEO lang={data.lang} toolId="" />
+<BlogSEO />
 
 <div class="max-w-[980px] mx-auto px-4 py-12 font-sans">
   <div class="flex flex-col md:flex-row gap-10">
