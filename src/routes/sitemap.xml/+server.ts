@@ -56,12 +56,12 @@ ${basePaths.map(path => {
     toolPaths.includes(path) ? '0.9' :
     path.startsWith('/blog') ? '0.8' : '0.5';
 
-  return `
+  return languages.map(lang => {
+    return `
   <url>
-    <loc>${getUrl(path, 'en')}</loc>
+    <loc>${getUrl(path, lang)}</loc>
     <changefreq>weekly</changefreq>
     <priority>${priority}</priority>
-
     <xhtml:link
       rel="alternate"
       hreflang="en"
@@ -78,6 +78,7 @@ ${basePaths.map(path => {
       href="${getUrl(path, 'en')}"
     />
   </url>`;
+  }).join('');
 }).join('')}
 </urlset>`.trim();
 
