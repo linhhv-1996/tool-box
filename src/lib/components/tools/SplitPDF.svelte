@@ -10,7 +10,7 @@
     } from "lucide-svelte";
     import Dropzone from "$lib/components/Dropzone.svelte";
     import SuccessState from "$lib/components/SuccessState.svelte";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -37,7 +37,7 @@
         const pdf = newFiles.find((f) => f.type === "application/pdf");
 
         if (!pdf) {
-            error = "Please select a valid PDF file.";
+            error = ui.split_pdf.err_no_pdf[lang as Language];
             return;
         }
 
@@ -48,7 +48,7 @@
             pageCount = pdfDoc.getPageCount();
             rangeInput = `1-${pageCount}`;
         } catch (e) {
-            error = "Could not read PDF information.";
+            error = ui.split_pdf.err_2[lang as Language];
             file = null;
         }
     }
@@ -116,7 +116,7 @@
             if (zipUrl) URL.revokeObjectURL(zipUrl);
             zipUrl = URL.createObjectURL(zipBlob);
         } catch (e: any) {
-            error = e.message || "Split failed. Check your range syntax.";
+            error = ui.split_pdf.err_3[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -133,12 +133,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang}
         accept=".pdf"
         multiple={false}
         hasFiles={!!file}
         onfiles={handleFiles}
         onClear={reset}
-        label="Select PDF File to Split"
+        label={ui.split_pdf.lbl[lang]}
     />
 
     {#if file}
@@ -171,7 +172,7 @@
                     for="ranges"
                     class="block font-mono text-[10px] font-bold uppercase text-slate-400 tracking-widest mb-2 flex items-center gap-1"
                 >
-                    <Scissors size={12} /> Define Ranges (e.g. 1-3, 5, 8-10)
+                    <Scissors size={12} /> {ui.split_pdf.range[lang]}
                 </label>
                 <input
                     id="ranges"
@@ -181,7 +182,7 @@
                     class="w-full h-12 px-4 bg-white border border-slate-200 font-mono text-sm focus:border-black outline-none transition-all rounded-sm"
                 />
                 <p class="mt-2 text-[10px] text-slate-400 font-mono">
-                    Output will be bundled into a ZIP archive.
+                    {ui.split_pdf.note[lang]}
                 </p>
             </div>
 
@@ -191,9 +192,9 @@
                 class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-md"
             >
                 {#if isProcessing}
-                    <Loader2 class="animate-spin mr-2" size={16} /> Processing...
+                    <Loader2 class="animate-spin mr-2" size={16} /> {ui.combine_pdf.processing[lang]}
                 {:else}
-                    Split & Export ZIP
+                    {ui.split_pdf.split[lang]}
                 {/if}
             </button>
         </div>
@@ -202,6 +203,7 @@
     {#if zipUrl && !isProcessing}
         <div class="mt-6">
             <SuccessState
+                lang={lang}
                 title="Split Complete"
                 file={{ name: resultFileName, size: zipSize, url: zipUrl }}
                 onReset={reset}

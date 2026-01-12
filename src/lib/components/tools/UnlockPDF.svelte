@@ -11,7 +11,7 @@
     import SuccessState from "$lib/components/SuccessState.svelte";
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     // --- LOGIC WASM ---
     let createModule = $state<any>(null);
@@ -72,7 +72,7 @@
                 // qpdf ném lỗi exit status 0 là bình thường, nếu khác 0 mới là lỗi thực sự
                 if (e.name !== "ExitStatus" || e.status !== 0) {
                     throw new Error(
-                        "Incorrect password or unsupported PDF format.",
+                        ui.unlock_pdf.err_1[lang as Language],
                     );
                 }
             }
@@ -88,7 +88,7 @@
             qpdf.FS.unlink("input.pdf");
             qpdf.FS.unlink("output.pdf");
         } catch (e) {
-            error = "Incorrect password. Please try again.";
+            error = ui.unlock_pdf.err_2[lang as Language];
             console.error(e);
         } finally {
             isProcessing = false;
@@ -106,12 +106,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang}
         accept=".pdf"
         multiple={false}
         hasFiles={!!file}
         onfiles={handleFiles}
         onClear={reset}
-        label="Select Encrypted PDF File"
+        label={ui.unlock_pdf.select_file[lang as Language]}
     />
 
     {#if file}
@@ -146,7 +147,7 @@
                         for="pw"
                         class="block text-[10px] font-mono font-bold uppercase text-slate-500 mb-2 ml-1 tracking-widest"
                     >
-                        PDF Password:
+                        {ui.unlock_pdf.pdf_pass[lang as Language]}
                     </label>
                     <div class="relative group">
                         <div
@@ -158,7 +159,7 @@
                             type="password"
                             id="pw"
                             bind:value={password}
-                            placeholder="Enter password to unlock..."
+                            placeholder={ui.unlock_pdf.enter_pass[lang as Language]}
                             class="w-full h-12 pl-10 px-4 bg-white border border-slate-200 rounded-sm font-mono text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
                         />
                     </div>
@@ -170,9 +171,9 @@
                     class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
                 >
                     {#if isProcessing}
-                        <Loader2 class="animate-spin mr-2" size={16} /> Unlocking...
+                        <Loader2 class="animate-spin mr-2" size={16} /> {ui.unlock_pdf.unlocking[lang as Language]}
                     {:else}
-                        <Unlock size={14} class="mr-2" /> Unlock PDF Now
+                        <Unlock size={14} class="mr-2" /> {ui.unlock_pdf.unlock_now[lang as Language]}
                     {/if}
                 </button>
             </div>
@@ -182,6 +183,7 @@
     {#if unlockedUrl && !isProcessing}
         <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
             <SuccessState
+                lang={lang}
                 title="Unlocked Successfully"
                 file={{
                     name: resultFileName,

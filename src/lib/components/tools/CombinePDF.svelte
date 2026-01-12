@@ -10,7 +10,7 @@
 
     import Dropzone from "$lib/components/Dropzone.svelte";
     import SuccessState from "$lib/components/SuccessState.svelte";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -38,7 +38,7 @@
 
     async function mergeAction() {
         if (files.length < 2) {
-            error = "Select at least 2 PDF files to combine.";
+            error = ui.combine_pdf.err_file_length[lang];
             return;
         }
         isProcessing = true;
@@ -62,7 +62,7 @@
             if (mergedUrl) URL.revokeObjectURL(mergedUrl);
             mergedUrl = URL.createObjectURL(blob);
         } catch (e) {
-            error = "Merge failed. Check if your PDF files are corrupted.";
+            error = ui.combine_pdf.err_failed[lang];
         } finally {
             isProcessing = false;
         }
@@ -83,12 +83,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang}
         accept=".pdf"
         multiple={true}
         hasFiles={files.length > 0}
         onfiles={handleFiles}
         onClear={reset}
-        label="Select PDF Files to Combine"
+        label={ui.combine_pdf.select_file[lang]}
     />
 
     {#if files.length > 0}
@@ -149,9 +150,9 @@
                 class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-md shadow-black/5"
             >
                 {#if isProcessing}
-                    <Loader2 class="animate-spin mr-2" size={16} /> Processing...
+                    <Loader2 class="animate-spin mr-2" size={16} /> {ui.combine_pdf.processing[lang]}
                 {:else}
-                    Merge PDF Documents
+                    {ui.combine_pdf.merge[lang]}
                 {/if}
             </button>
         </div>
@@ -160,6 +161,7 @@
     {#if mergedUrl && !isProcessing}
         <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
             <SuccessState
+                lang={lang}
                 title="Merge Complete"
                 file={{
                     name: resultFileName,

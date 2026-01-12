@@ -11,7 +11,7 @@
     import SuccessState from "$lib/components/SuccessState.svelte";
     import { compressImage } from "$lib/utils/image-processor";
     import { browser } from "$app/environment";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -56,7 +56,7 @@
         );
 
         if (validFiles.length === 0) {
-            error = "Please select valid images (JPG, PNG, WebP).";
+            error = ui.shrink_images.err_1[lang as Language];
             return;
         }
         files = [...files, ...validFiles];
@@ -120,7 +120,7 @@
             if (resultUrl) URL.revokeObjectURL(resultUrl);
             resultUrl = URL.createObjectURL(zipContent);
         } catch (e) {
-            error = "Optimization failed. Try reducing quality.";
+            error = ui.shrink_images.err_2[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -129,6 +129,8 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang}
+        label={ui.shrink_images.drop_lable[lang as Language]}
         onfiles={handleFiles}
         hasFiles={files.length > 0}
         onClear={reset}
@@ -187,7 +189,7 @@
                         <SlidersHorizontal size={14} class="text-slate-500" />
                         <span
                             class="font-mono text-[10px] font-bold uppercase text-slate-500"
-                            >Quality: {quality}%</span
+                            >{ui.shrink_images.quality[lang as Language]}: {quality}%</span
                         >
                     </div>
                 </div>
@@ -206,15 +208,16 @@
                 class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 disabled:bg-slate-200 transition-all flex items-center justify-center"
             >
                 {#if isProcessing}
-                    <Loader2 class="animate-spin mr-2" size={16} /> Optimizing {progress.current}/{progress.total}...
+                    <Loader2 class="animate-spin mr-2" size={16} /> {ui.shrink_images.optimizing[lang as Language]} {progress.current}/{progress.total}...
                 {:else}
-                    <Zap size={14} class="mr-2" /> Compress Images
+                    <Zap size={14} class="mr-2" /> {ui.shrink_images.compress_img[lang as Language]}
                 {/if}
             </button>
 
             {#if resultUrl && !isProcessing}
                 <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
                     <SuccessState
+                        lang={lang}
                         title="Compression Done"
                         file={{
                             name: resultFileName,
@@ -238,7 +241,7 @@
                         <p
                             class="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest px-1 mb-2"
                         >
-                            Compression Details:
+                            {ui.shrink_images.compress_detail[lang as Language]}:
                         </p>
                         <div
                             class="max-h-[160px] overflow-y-auto custom-scrollbar border-t border-slate-100 pr-1"

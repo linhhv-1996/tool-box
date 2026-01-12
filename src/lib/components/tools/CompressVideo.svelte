@@ -15,7 +15,7 @@
     import JSZip from "jszip";
     import Dropzone from "$lib/components/Dropzone.svelte";
     import SuccessState from "$lib/components/SuccessState.svelte";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -71,7 +71,7 @@
             });
             isLoaded = true;
         } catch (e: any) {
-            error = "High-speed engine failed to load.";
+            error = ui.video_compress.err_1[lang as Language];
         }
     }
 
@@ -89,14 +89,14 @@
         let currentTotal = 0;
         for (const f of newFiles) {
             if (f.size > MAX_SINGLE_FILE_SIZE) {
-                error = `File "${f.name}" too large (Max 200MB).`;
+                error = `"${f.name}" "${ui.video_compress.err_2[lang]}"`;
                 return;
             }
             currentTotal += f.size;
             tempQueue.push({ file: f, status: "pending", progress: 0 });
         }
         if (currentTotal > MAX_TOTAL_SIZE) {
-            error = "Total size exceeds 500MB limit.";
+            error = ui.video_compress.err_3[lang];
             return;
         }
         videoQueue = [...videoQueue, ...tempQueue];
@@ -196,7 +196,7 @@
             if (batchZipUrl) URL.revokeObjectURL(batchZipUrl);
             batchZipUrl = URL.createObjectURL(zipContent);
         } catch (e: any) {
-            error = "An error occurred during compression.";
+            error = ui.video_compress.err_4[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -217,17 +217,18 @@
             <p
                 class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400"
             >
-                Initializing High-Speed Engine...
+                {ui.video_compress.init_wasm[lang as Language]}
             </p>
         </div>
     {:else}
         <Dropzone
+            lang={lang}
             onfiles={handleFiles}
             hasFiles={videoQueue.length > 0}
             onClear={reset}
             multiple={true}
             accept="video/*"
-            label="Select Video Files to Compress"
+            label={ui.video_compress.drop_lbl[lang as Language]}
         />
 
         {#if videoQueue.length > 0}
@@ -297,12 +298,13 @@
                     <div
                         class="bg-slate-50 border border-slate-100 p-5 rounded-sm"
                     >
+                        <!-- svelte-ignore a11y_label_has_associated_control -->
                         <label
                             class="block font-mono text-[10px] font-bold uppercase text-slate-500 mb-4 tracking-widest"
-                            >Compression Level</label
+                            >{ui.video_compress.compress_lvl[lang as Language]}</label
                         >
                         <div class="flex gap-2">
-                            {#each [{ id: "small", label: "Small (720p)" }, { id: "balanced", label: "Balanced" }, { id: "high", label: "High" }] as q}
+                            {#each [{ id: "small", label: ui.video_compress.lvl_720p[lang] }, { id: "balanced", label: ui.video_compress.lvl_balance[lang] }, { id: "high", label: ui.video_compress.lvl_high[lang] }] as q}
                                 <button
                                     onclick={() => (quality = q.id)}
                                     class="flex-1 py-2.5 border font-mono text-[10px] uppercase transition-all {quality ===
@@ -325,7 +327,7 @@
                         <p
                             class="text-[9px] text-amber-700 leading-relaxed font-mono uppercase font-bold tracking-tighter"
                         >
-                            CPU Intensive. Keep tab active.
+                            {ui.video_compress.note[lang]}
                         </p>
                     </div>
                 </div>
@@ -336,13 +338,13 @@
                     class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
                 >
                     {#if isProcessing}
-                        <Loader2 class="animate-spin mr-2" size={16} /> Processing
+                        <Loader2 class="animate-spin mr-2" size={16} /> {ui.video_compress.processing[lang]}
                         {overallProgress}%
                     {:else}
                         <Zap size={14} class="mr-2" />
                         {batchZipUrl
-                            ? "Process New Batch"
-                            : "Start Compression"}
+                            ? ui.video_compress.process_new[lang]
+                            : ui.video_compress.start[lang]}
                     {/if}
                 </button>
 
@@ -351,6 +353,7 @@
                         class="mt-6 animate-in fade-in zoom-in-95 duration-500"
                     >
                         <SuccessState
+                            lang={lang}
                             title="Compression Done"
                             file={{
                                 name: `compressed_bundle.zip`,
@@ -367,7 +370,6 @@
                                         : "0%",
                             }}
                             onReset={reset}
-                            mainActionLabel="Download ZIP"
                         />
 
                         <div
@@ -376,7 +378,7 @@
                             <p
                                 class="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest px-1 mb-2"
                             >
-                                Compression Details:
+                                {ui.video_compress.compress_detail[lang]}:
                             </p>
                             <div
                                 class="max-h-[160px] overflow-y-auto custom-scrollbar border-t border-slate-100 pr-1"
@@ -405,7 +407,7 @@
                                                 {#if item.isOptimized}
                                                     <span
                                                         class="text-[8px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-100 uppercase font-bold"
-                                                        >Tối ưu</span
+                                                        >Optimized</span
                                                     >
                                                 {:else}
                                                     <span

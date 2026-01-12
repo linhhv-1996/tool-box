@@ -10,7 +10,7 @@
     import SuccessState from "$lib/components/SuccessState.svelte";
     import { browser } from "$app/environment";
     import JSZip from "jszip";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -44,7 +44,7 @@
         );
 
         if (validFiles.length === 0) {
-            error = "Please select valid HEIC/HEIF files.";
+            error = ui.heic.err_1[lang as Language];
             return;
         }
         files = [...files, ...validFiles];
@@ -92,7 +92,7 @@
             }
         } catch (e) {
             console.error(e);
-            error = "Conversion failed. Some HEIC files might be corrupted.";
+            error = ui.heic.err_2[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -115,12 +115,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang}
         onfiles={handleFiles}
         hasFiles={files.length > 0}
         onClear={reset}
         accept=".heic,.heif"
         multiple={true}
-        label="Select HEIC/HEIF files"
+        label={ui.heic.select_file[lang as Language]}
     />
 
     {#if files.length > 0}
@@ -178,9 +179,10 @@
             <div
                 class="bg-slate-50/50 p-5 border border-slate-100 rounded-sm mb-6"
             >
+                <!-- svelte-ignore a11y_label_has_associated_control -->
                 <label
                     class="block font-mono text-[10px] font-bold uppercase text-slate-500 mb-3 tracking-widest"
-                    >Output Format</label
+                    >{ui.heic.output[lang]}</label
                 >
                 <div class="flex gap-2">
                     {#each ["jpeg", "png"] as f}
@@ -204,9 +206,9 @@
             >
                 {#if isProcessing}
                     <Loader2 class="animate-spin mr-2" size={16} />
-                    Converting {progress.current}/{progress.total}...
+                    {ui.heic.converting[lang]} {progress.current}/{progress.total}...
                 {:else}
-                    <ImageIcon size={14} class="mr-2" /> Convert to {outputFormat ===
+                    <ImageIcon size={14} class="mr-2" /> {ui.heic.convert_to[lang]} {outputFormat ===
                     "jpeg"
                         ? "JPG"
                         : "PNG"}
@@ -216,6 +218,7 @@
             {#if resultUrl && !isProcessing}
                 <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
                     <SuccessState
+                        lang={lang}
                         title="Conversion Complete"
                         file={{
                             name: resultFileName,

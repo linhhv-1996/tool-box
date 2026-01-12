@@ -3,7 +3,7 @@
     import { Loader2, Trash2, Settings2, AlertCircle } from "lucide-svelte";
     import Dropzone from "$lib/components/Dropzone.svelte";
     import SuccessState from "$lib/components/SuccessState.svelte";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -111,7 +111,7 @@
             const blob = new Blob([pdfBytes], { type: "application/pdf" });
             pdfUrl = URL.createObjectURL(blob);
         } catch (e) {
-            errorMessage = "Error converting images. Please try again.";
+            errorMessage = ui.img2pdf.error_message[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -126,12 +126,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang}
         accept="image/*"
         multiple={true}
         hasFiles={images.length > 0}
         onfiles={handleFiles}
         onClear={reset}
-        label="Select Images"
+        label={ui.img2pdf.select_images[lang]}
     />
 
     {#if images.length > 0}
@@ -175,7 +176,7 @@
                 <span
                     class="text-[10px] font-mono font-bold uppercase text-slate-400 flex items-center gap-1"
                 >
-                    <Settings2 size={12} /> Layout:
+                    <Settings2 size={12} /> {ui.img2pdf.layout[lang as Language]}:
                 </span>
                 <div class="flex gap-4">
                     {#each ["original", "a4"] as size}
@@ -203,9 +204,9 @@
                 class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-200 transition-all shadow-lg flex items-center justify-center"
             >
                 {#if isProcessing}
-                    <Loader2 class="animate-spin mr-2" size={16} /> Converting...
+                    <Loader2 class="animate-spin mr-2" size={16} /> {ui.img2pdf.converting[lang]}
                 {:else}
-                    Convert to PDF
+                    {ui.img2pdf.convert_to_PDF[lang]}
                 {/if}
             </button>
         </div>
@@ -214,6 +215,7 @@
     {#if pdfUrl && !isProcessing}
         <div class="mt-6">
             <SuccessState
+                lang={lang}
                 file={{ name: resultFileName, size: resultSize, url: pdfUrl }}
                 onReset={reset}
             />

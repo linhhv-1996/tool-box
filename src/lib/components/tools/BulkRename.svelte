@@ -13,7 +13,7 @@
     } from "lucide-svelte";
     import Dropzone from "$lib/components/Dropzone.svelte";
     import SuccessState from "$lib/components/SuccessState.svelte";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
     
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -128,7 +128,7 @@
             if (zipUrl) URL.revokeObjectURL(zipUrl);
             zipUrl = URL.createObjectURL(zipContent);
         } catch (e) {
-            error = "Renaming failed. Please check your files.";
+            error = ui.bulk_rename.err_1[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -137,12 +137,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang}
         onfiles={handleFiles}
         hasFiles={files.length > 0}
         onClear={reset}
         accept="*"
         multiple={true}
-        label="Select Files to Rename"
+        label={ui.bulk_rename.select_file[lang as Language]}
     />
 
     {#if files.length > 0}
@@ -152,32 +153,32 @@
             <div class="mb-8">
                 <span
                     class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-4 tracking-widest border-b border-slate-50 pb-2"
-                    >Renaming Rules</span
+                    >{ui.bulk_rename.rule[lang as Language]}</span
                 >
                 <div class="flex flex-wrap gap-2 mb-4">
                     <button
                         onclick={() => addRule("find-replace")}
                         class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm"
                     >
-                        <ArrowLeftRight size={12} /> Find & Replace
+                        <ArrowLeftRight size={12} /> {ui.bulk_rename.find_replace[lang as Language]}
                     </button>
                     <button
                         onclick={() => addRule("prefix-suffix")}
                         class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm"
                     >
-                        <Type size={12} /> Prefix/Suffix
+                        <Type size={12} /> {ui.bulk_rename.prefix_suffix[lang as Language]}
                     </button>
                     <button
                         onclick={() => addRule("numbering")}
                         class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm"
                     >
-                        <Hash size={12} /> Numbering
+                        <Hash size={12} /> {ui.bulk_rename.numbering[lang as Language]}
                     </button>
                     <button
                         onclick={() => addRule("case")}
                         class="flex items-center gap-2 px-3 py-1.5 border border-slate-200 text-[10px] font-mono uppercase hover:border-black transition-all bg-white rounded-sm"
                     >
-                        <CaseSensitive size={12} /> Change Case
+                        <CaseSensitive size={12} /> {ui.bulk_rename.change_case[lang as Language]}
                     </button>
                 </div>
 
@@ -195,7 +196,7 @@
                             <div class="flex flex-col gap-3">
                                 <span
                                     class="text-[9px] font-bold font-mono uppercase text-slate-400 tracking-widest"
-                                    >Rule: {rule.type.replace("-", " ")}</span
+                                    >{ui.bulk_rename.rule_txt[lang]}: {rule.type.replace("-", " ")}</span
                                 >
 
                                 {#if rule.type === "find-replace"}
@@ -203,13 +204,13 @@
                                         <input
                                             type="text"
                                             bind:value={rule.data.find}
-                                            placeholder="Find..."
+                                            placeholder="{ui.bulk_rename.find[lang]}"
                                             class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"
                                         />
                                         <input
                                             type="text"
                                             bind:value={rule.data.replace}
-                                            placeholder="Replace..."
+                                            placeholder="{ui.bulk_rename.replace[lang]}"
                                             class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"
                                         />
                                     </div>
@@ -218,13 +219,13 @@
                                         <input
                                             type="text"
                                             bind:value={rule.data.prefix}
-                                            placeholder="Prefix..."
+                                            placeholder="{ui.bulk_rename.prefix[lang]}"
                                             class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"
                                         />
                                         <input
                                             type="text"
                                             bind:value={rule.data.suffix}
-                                            placeholder="Suffix..."
+                                            placeholder="{ui.bulk_rename.suffix[lang]}"
                                             class="w-full h-10 border border-slate-200 p-2 text-xs font-mono focus:border-black outline-none bg-white rounded-sm"
                                         />
                                     </div>
@@ -233,7 +234,7 @@
                                         <div class="flex-1">
                                             <span
                                                 class="text-[8px] uppercase text-slate-400 block mb-1 font-bold"
-                                                >Start At</span
+                                                >{ui.bulk_rename.start_at[lang]}</span
                                             >
                                             <input
                                                 type="number"
@@ -244,7 +245,7 @@
                                         <div class="flex-1">
                                             <span
                                                 class="text-[8px] uppercase text-slate-400 block mb-1 font-bold"
-                                                >Padding</span
+                                                >{ui.bulk_rename.padding[lang]}</span
                                             >
                                             <select
                                                 bind:value={rule.data.padding}
@@ -280,7 +281,7 @@
             <div class="mb-10">
                 <span
                     class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-4 tracking-widest border-b border-slate-50 pb-2"
-                    >Preview Changes</span
+                    >{ui.bulk_rename.prefix[lang]}</span
                 >
                 <ul
                     class="divide-y divide-slate-100 max-h-80 overflow-y-auto custom-scrollbar border border-slate-100 rounded-sm"
@@ -336,15 +337,16 @@
                 class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
             >
                 {#if isProcessing}
-                    <Loader2 class="animate-spin mr-2" size={16} /> Packaging...
+                    <Loader2 class="animate-spin mr-2" size={16} /> {ui.bulk_rename.packaging[lang]}
                 {:else}
-                    Apply & Download ZIP
+                    {ui.bulk_rename.apply_download[lang]}
                 {/if}
             </button>
 
             {#if zipUrl && !isProcessing}
                 <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
                     <SuccessState
+                        lang={lang}
                         title="Files Renamed"
                         file={{
                             name: resultFileName,

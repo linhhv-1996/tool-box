@@ -1,6 +1,7 @@
 <script lang="ts">
     import { ui, type Language } from "$lib/translate/ui";
     let { related, lang = "en" }: { related: any, lang: Language } = $props();
+    let langPreUrl = $derived(lang === 'en' ? '' : `/${lang}`);
 </script>
 
 <div class="sticky top-6 space-y-8">
@@ -12,7 +13,7 @@
         </h3>
         <div class="space-y-4">
             {#each related as r}
-                <a href={r.href} class="group block">
+                <a href="{langPreUrl}{r.href}" class="group block">
                     <span
                         class="text-xs font-bold block group-hover:underline text-[#1a1a1a]"
                         >{r.name[lang]}</span

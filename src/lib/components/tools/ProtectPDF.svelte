@@ -13,7 +13,7 @@
     import SuccessState from "$lib/components/SuccessState.svelte";
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     let { lang = "en" }: { lang: Language } = $props();
 
@@ -48,7 +48,7 @@
         protectedUrl = null;
         const pdf = newFiles.find((f) => f.type === "application/pdf");
         if (!pdf) {
-            error = "Please select a valid PDF file.";
+            error = ui.protect_pdf.err_1[lang as Language];
             return;
         }
         file = pdf;
@@ -93,7 +93,7 @@
             qpdf.FS.unlink("output.pdf");
         } catch (e: any) {
             error =
-                "Encryption failed. Ensure the PDF is not already encrypted.";
+                ui.protect_pdf.err_2[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -110,12 +110,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang as Language}
         accept=".pdf"
         multiple={false}
         hasFiles={!!file}
         onfiles={handleFiles}
         onClear={reset}
-        label="Select PDF File to Protect"
+        label={ui.protect_pdf.select_file[lang as Language]}
     />
 
     {#if file}
@@ -148,7 +149,7 @@
                         for="pw"
                         class="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1.5 ml-1"
                     >
-                        Document Password:
+                        {ui.protect_pdf.doc_pass[lang as Language]}
                     </label>
                     <div class="relative group">
                         <div
@@ -160,7 +161,7 @@
                             id="pw"
                             type={showPassword ? "text" : "password"}
                             bind:value={password}
-                            placeholder="Set a strong password..."
+                            placeholder={ui.protect_pdf.strong_pass[lang as Language]}
                             class="w-full h-12 pl-10 pr-12 bg-white border border-slate-200 font-mono text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all rounded-sm"
                         />
                         <button
@@ -183,9 +184,9 @@
                     class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-slate-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
                 >
                     {#if isProcessing}
-                        <Loader2 class="animate-spin mr-2" size={16} /> Encrypting...
+                        <Loader2 class="animate-spin mr-2" size={16} /> {ui.protect_pdf.encrypting[lang as Language]}
                     {:else}
-                        <ShieldCheck size={16} class="mr-2" /> Protect PDF Now
+                        <ShieldCheck size={16} class="mr-2" /> {ui.protect_pdf.protect_now[lang as Language]}
                     {/if}
                 </button>
             </div>
@@ -195,7 +196,8 @@
     {#if protectedUrl && !isProcessing}
         <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
             <SuccessState
-                title="Protection Success"
+                lang={lang}
+                title={ui.protect_pdf.success[lang as Language]}
                 file={{
                     name: resultFileName,
                     size: fileSize,

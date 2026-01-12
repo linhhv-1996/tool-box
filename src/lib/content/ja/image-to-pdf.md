@@ -1,70 +1,80 @@
-# Image to PDF Converter: Create PDFs Online Securely (No Upload & No Watermark)
+# 画像からPDFへ変換：安全にオンラインでPDFを作成（アップロード不要・透かしなし）
 
-Need to turn your photos into a professional document? Whether it's a scanned receipt, an ID card, or a series of lecture notes, our **Image to PDF Converter** provides a fast and secure way to **convert images to PDF** directly in your browser.
+写真をプロフェッショナルな書類に変換したいですか？  
+レシートのスキャン、身分証明書、講義ノートの写真など、どんな画像でも **Image to PDF Converter** を使えば、ブラウザ上で **高速かつ安全に画像をPDFへ変換** できます。
 
-Unlike other free tools, we don't add annoying watermarks and we **never upload your images** to a server. Your privacy is our priority.
-
-
-## Why This is the Most Secure Image to PDF Tool
-
-Most online converters require you to send your private photos to their cloud. This is a huge risk for sensitive documents like passports or bank statements. Our **client-side PDF generator** changes the game:
-
-* **100% Local Processing:** Your images stay on your computer. We use `pdf-lib` technology to build the PDF inside your browser memory.
-* **No Watermarks:** Get clean, professional PDF files for free. No branding, no logos, just your content.
-* **Combine Multiple Images:** Easily **merge JPG, PNG, or WebP files into one PDF** document in any order you choose.
-* **No Size or Page Limits:** Since there’s no server bandwidth involved, you can convert as many high-resolution photos as your RAM can handle.
+他の無料ツールとは違い、**透かしは一切なし**、そして **画像をサーバーにアップロードすることもありません**。あなたのプライバシーを最優先に設計されています。
 
 
-## Powerful Features for Seamless Conversion
+## なぜこの画像→PDFツールは最も安全なのか？
 
-### 1. Intuitive Drag & Drop Reordering
-Don't worry if you uploaded your images in the wrong order. Our tool features a **visual page organizer**. Simply drag and drop the thumbnails to arrange your pages perfectly before generating the final PDF.
+多くのオンライン変換ツールは、画像をクラウドに送信する必要があります。これは、パスポートや銀行書類などの機密データにとって大きなリスクです。  
+当ツールの **クライアントサイドPDF生成技術** は、その常識を覆します。
 
-### 2. Support for All Major Image Formats
-This is a universal **photo to PDF converter** that supports:
-* **JPG / JPEG:** Perfect for camera photos and scans.
-* **PNG:** Best for screenshots and graphics with sharp text.
-* **WebP:** Modern format for web-optimized images.
-* **BMP:** Standard bitmap images.
-
-### 3. Lossless Conversion Quality
-We ensure that your images are not compressed or blurred during the process. The resulting PDF will maintain the **original resolution**, making it perfect for printing or official document submissions.
-
-### 4. Optimized for Mobile (iPhone & Android)
-Need to **convert a photo to PDF on your phone**? Just open this tool in your mobile browser, snap a picture, and convert it instantly. No need to download bulky, ad-filled apps from the App Store or Play Store.
+* **100%ローカル処理**：画像はすべてあなたのデバイス内で処理されます。`pdf-lib` 技術を使用し、ブラウザのメモリ上でPDFを生成します。
+* **透かしなし**：ロゴやブランド表示のない、クリーンでプロ仕様のPDFを無料で作成。
+* **複数画像を1つのPDFに統合**：JPG・PNG・WebPなどを、好きな順番で1つのPDFに結合可能。
+* **サイズ・ページ数制限なし**：サーバー通信が不要なため、RAMが許す限り高解像度画像を変換できます。
 
 
-## Common Use Cases: What Can You Convert?
+## スムーズな変換を実現する強力な機能
 
-* **Official Applications:** Convert scans of your ID, Passport, or Visa into a single PDF for online forms.
-* **Education:** Combine photos of handwritten notes or textbook pages into one easy-to-read document.
-* **Business:** Turn receipts and invoices into a PDF expense report in seconds.
-* **Design Portfolios:** Merge several design exports into a single PDF presentation for clients.
+### 1. 直感的なドラッグ＆ドロップ並び替え
+画像のアップロード順を間違えても問題ありません。  
+**ビジュアルページオーガナイザー** により、サムネイルをドラッグするだけでページ順を自由に調整できます。
 
+### 2. 主要な画像形式に完全対応
+この **画像→PDF変換ツール** は以下の形式をサポートしています：
 
-## How to Convert Images to PDF Online (Step-by-Step)
+* **JPG / JPEG**：カメラ写真やスキャン画像に最適
+* **PNG**：スクリーンショットや文字が鮮明な画像向け
+* **WebP**：Web最適化された最新フォーマット
+* **BMP**：標準的なビットマップ画像
 
-*  **Upload Images:** Drag and drop your files or click the selection box.
-*  **Arrange Pages:** Move the thumbnails to set the correct page sequence.
-*  **Convert & Download:** Click **"Convert to PDF"**. The file is generated instantly—no waiting for "uploading" or "processing" bars.
+### 3. 高品質・無劣化変換
+画像は圧縮・ぼかし処理を行いません。  
+生成されるPDFは **元の解像度を完全に保持** し、印刷や公式提出書類にも最適です。
 
-
-## Frequently Asked Questions (FAQ)
-
-### Is there a watermark on the PDF?
-No. Our tool is **100% watermark-free**. You get a clean, professional document every time.
-
-### Is it safe to convert my ID or Passport photos?
-Yes, it is the safest way to do it online. Because this is a **client-side converter**, your sensitive images are never sent to our servers. They stay in your browser's temporary memory and are cleared as soon as you close the tab.
-
-### Can I combine different formats (e.g., a JPG and a PNG) into one PDF?
-Yes! You can mix and match any supported image formats. The tool will handle them all and merge them into a single, cohesive PDF file.
-
-### Does this work on Mac and Windows?
-Yes. It is a **browser-based tool** that works perfectly on Windows 10/11, macOS, Linux, and even ChromeOS.
+### 4. モバイル完全対応（iPhone / Android）
+スマホで **写真をPDFに変換** したい場合も、このツールをモバイルブラウザで開くだけ。  
+写真を撮影して即変換可能。広告だらけの重いアプリをインストールする必要はありません。
 
 
-## Professional PDF Creation, Made Simple
-Stop wasting time with slow, insecure converters. Use our **Image to PDF** tool to create high-quality, private, and professional documents in seconds.
+## 主な利用シーン：どんな用途に使える？
 
-**Bookmark this tool** for the next time you need to **combine photos into a PDF** securely!
+* **公式申請書類**：身分証明書・パスポート・ビザを1つのPDFにまとめて提出
+* **学習・教育**：手書きノートや教科書ページを1つのPDFに整理
+* **ビジネス**：領収書・請求書をPDFの経費報告書に変換
+* **デザインポートフォリオ**：複数のデザイン作品をPDF資料として統合
+
+
+## 画像をPDFに変換する方法（簡単3ステップ）
+
+* **画像を追加**：ドラッグ＆ドロップ、またはクリックして選択
+* **ページ順を調整**：サムネイルを移動して正しい順番に
+* **変換＆ダウンロード**：「PDFに変換」をクリックすると即座に生成完了  
+  ※アップロードや処理待ち時間は一切ありません
+
+
+## よくある質問（FAQ）
+
+### PDFに透かしは入りますか？
+いいえ。**100%透かしなし** です。常にクリーンでプロフェッショナルなPDFを作成できます。
+
+### 身分証明書やパスポートの変換は安全ですか？
+はい。オンライン上で最も安全な方法です。  
+このツールは **クライアントサイド変換** のため、画像がサーバーに送信されることはありません。タブを閉じるとデータは自動的に消去されます。
+
+### JPGとPNGなど、異なる形式を1つのPDFにまとめられますか？
+もちろん可能です。対応している形式であれば、自由に組み合わせて1つのPDFに統合できます。
+
+### MacやWindowsでも使えますか？
+はい。**ブラウザベースのツール** なので、Windows 10/11、macOS、Linux、ChromeOS すべてに対応しています。
+
+
+## プロ品質のPDF作成を、もっと簡単に
+遅くて危険な変換ツールはもう不要。  
+この **Image to PDF** ツールで、高品質・安全・プライベートなPDFを数秒で作成しましょう。
+
+次回 **写真をPDFにまとめる** 必要があるときのために、  
+**ぜひブックマークしてください！**

@@ -10,7 +10,7 @@
     import SuccessState from "$lib/components/SuccessState.svelte";
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     // --- LOGIC GỐC (GIỮ NGUYÊN) ---
     let pdfjs: any = $state(null);
@@ -102,12 +102,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang as Language}
         accept=".pdf"
         multiple={false}
         hasFiles={!!file}
         onfiles={handleFiles}
         onClear={reset}
-        label="Select PDF File to Convert"
+        label={ui.pdf_to_image.select_file[lang as Language]}
     />
 
     {#if file}
@@ -135,9 +136,10 @@
                 <div
                     class="bg-slate-50/50 p-4 border border-slate-100 rounded-sm"
                 >
+                    <!-- svelte-ignore a11y_label_has_associated_control -->
                     <label
                         class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-3 tracking-widest"
-                        >Format</label
+                        >{ui.pdf_to_image.format[lang as Language]}</label
                     >
                     <div class="flex gap-2">
                         {#each ["png", "jpeg"] as f}
@@ -156,9 +158,10 @@
                 <div
                     class="bg-slate-50/50 p-4 border border-slate-100 rounded-sm"
                 >
+                    <!-- svelte-ignore a11y_label_has_associated_control -->
                     <label
                         class="block font-mono text-[10px] font-bold uppercase text-slate-400 mb-3 tracking-widest"
-                        >Quality (DPI)</label
+                        >{ui.pdf_to_image.quality[lang as Language]}</label
                     >
                     <div class="flex gap-2">
                         {#each [1, 2, 3] as s}
@@ -182,12 +185,12 @@
                 class="w-full h-14 bg-black text-white font-mono text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 disabled:bg-slate-200 transition-all flex items-center justify-center shadow-lg"
             >
                 {#if isProcessing}
-                    <Loader2 class="animate-spin mr-2" size={16} /> Rendering {progress}%...
+                    <Loader2 class="animate-spin mr-2" size={16} /> {ui.pdf_to_image.rendering[lang as Language]} {progress}%...
                 {:else}
                     <ImageIcon size={16} class="mr-2" />
                     {images.length > 0
-                        ? "Convert Again"
-                        : "Convert PDF to Images"}
+                        ? ui.pdf_to_image.convert_again[lang as Language]
+                        : ui.pdf_to_image.convert_to_img[lang as Language]}
                 {/if}
             </button>
         </div>
@@ -196,6 +199,7 @@
     {#if zipUrl && !isProcessing}
         <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
             <SuccessState
+                lang={lang as Language}
                 title="Conversion Done"
                 file={{ name: resultFileName, size: zipSize, url: zipUrl }}
                 onReset={reset}

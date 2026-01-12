@@ -1,9 +1,13 @@
-<script>
+<script lang="ts">
+    import type { Language } from '$lib/translate/ui';
+    import { ui } from '$lib/translate/ui';
+
   // @ts-nocheck
   import { Plus, Trash2, UploadCloud, FileUp } from 'lucide-svelte';
   
   // Props linh hoạt
   let { 
+    lang = "en",
     onfiles,            // Callback khi chọn file
     onClear,            // Callback khi xóa sạch
     accept = "*",       // Loại file chấp nhận (mặc định là tất cả)
@@ -21,6 +25,10 @@
       e.target.value = '';
     }
   }
+
+  // svelte-ignore state_referenced_locally
+    compactLabel = ui.dropzone.add_more[lang as Language];
+  
 </script>
 
 {#if !hasFiles}
@@ -55,7 +63,7 @@
           <span class="font-mono text-[10px] font-bold uppercase tracking-wider">{compactLabel}</span>
         {:else}
           <FileUp size={14} />
-          <span class="font-mono text-[10px] font-bold uppercase tracking-wider">Change File</span>
+          <span class="font-mono text-[10px] font-bold uppercase tracking-wider">{ui.dropzone.change_file[lang]}</span>
         {/if}
       </label>
     </div>
@@ -66,7 +74,7 @@
         class="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-sm transition-all"
       >
         <Trash2 size={14} />
-        <span class="font-mono text-[10px] font-bold uppercase tracking-wider">Clear</span>
+        <span class="font-mono text-[10px] font-bold uppercase tracking-wider">{ui.dropzone.clear[lang]}</span>
       </button>
     {/if}
   </div>

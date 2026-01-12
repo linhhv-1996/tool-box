@@ -6,7 +6,7 @@
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
     import JSZip from "jszip";
-    import type { Language } from "$lib/translate/ui";
+    import { ui, type Language } from "$lib/translate/ui";
 
     // --- LOGIC XỬ LÝ NÉN ---
     let createModule = $state<any>(null);
@@ -41,7 +41,7 @@
         resultUrl = null;
         const pdfs = newFiles.filter((f) => f.type === "application/pdf");
         if (pdfs.length === 0) {
-            error = "Please select valid PDF files.";
+            error = ui.compress_pdf.err_1[lang as Language];
             return;
         }
         files = [...files, ...pdfs];
@@ -100,7 +100,7 @@
                 resultUrl = URL.createObjectURL(content);
             }
         } catch (e: any) {
-            error = "Compression failed for one or more files.";
+            error = ui.compress_pdf.err_2[lang as Language];
         } finally {
             isProcessing = false;
         }
@@ -123,12 +123,13 @@
 
 <div class="bg-white border border-slate-200 rounded-sm shadow-sm p-5 md:p-8">
     <Dropzone
+        lang={lang as Language}
         onfiles={handleFiles}
         hasFiles={files.length > 0}
         onClear={reset}
         accept=".pdf"
         multiple={true}
-        label="Select PDF files to compress"
+        label={ui.compress_pdf.select_file[lang as Language]}
     />
 
     {#if files.length > 0}
@@ -191,15 +192,16 @@
             >
                 {#if isProcessing}
                     <Loader2 class="animate-spin mr-2" size={16} />
-                    Compressing {progress.current}/{progress.total}...
+                    {ui.compress_pdf.compressing[lang as Language]} {progress.current}/{progress.total}...
                 {:else}
-                    <Zap size={14} class="mr-2" /> Compress PDF Documents
+                    <Zap size={14} class="mr-2" /> {ui.compress_pdf.compress_pdf_file[lang as Language]}
                 {/if}
             </button>
 
             {#if resultUrl && !isProcessing}
                 <div class="mt-6 animate-in fade-in zoom-in-95 duration-500">
                     <SuccessState
+                        lang={lang}
                         title="Compression Complete"
                         file={{
                             name: resultFileName,
