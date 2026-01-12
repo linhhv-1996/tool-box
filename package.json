@@ -39,6 +39,7 @@
 		"heic2any": "^0.0.4",
 		"jszip": "^3.10.1",
 		"lucide-svelte": "^0.562.0",
+		"mediabunny": "^1.27.4",
 		"mp4-muxer": "^5.2.2",
 		"pdf-lib": "^1.17.1",
 		"pdfjs-dist": "^5.4.530",

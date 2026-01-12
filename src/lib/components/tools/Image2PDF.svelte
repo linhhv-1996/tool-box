@@ -133,6 +133,7 @@
         onfiles={handleFiles}
         onClear={reset}
         label={ui.img2pdf.select_images[lang]}
+        compactLabel={ui.common.add_more[lang as Language]}
     />
 
     {#if images.length > 0}

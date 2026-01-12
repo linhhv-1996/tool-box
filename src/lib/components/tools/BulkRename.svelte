@@ -144,6 +144,7 @@
         accept="*"
         multiple={true}
         label={ui.bulk_rename.select_file[lang as Language]}
+        compactLabel={ui.common.add_more[lang as Language]}
     />
 
     {#if files.length > 0}

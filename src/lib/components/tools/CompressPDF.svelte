@@ -130,6 +130,7 @@
         accept=".pdf"
         multiple={true}
         label={ui.compress_pdf.select_file[lang as Language]}
+        compactLabel={ui.common.add_more[lang as Language]}
     />
 
     {#if files.length > 0}

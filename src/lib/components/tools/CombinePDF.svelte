@@ -90,6 +90,7 @@
         onfiles={handleFiles}
         onClear={reset}
         label={ui.combine_pdf.select_file[lang]}
+        compactLabel={ui.common.add_more[lang as Language]}
     />
 
     {#if files.length > 0}

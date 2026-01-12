@@ -17,7 +17,7 @@
     compactLabel = "Add More" // Label nút thêm file lúc đã có file
   } = $props();
 
-  function handleChange(e) {
+  function handleChange(e: any) {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       onfiles(files);
@@ -25,9 +25,6 @@
       e.target.value = '';
     }
   }
-
-  // svelte-ignore state_referenced_locally
-    compactLabel = ui.dropzone.add_more[lang as Language];
   
 </script>
 

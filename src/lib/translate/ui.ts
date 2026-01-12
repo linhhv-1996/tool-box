@@ -1,6 +1,13 @@
 export type Language = 'en' | 'ja';
 
 export const ui = {
+  common: {
+    add_more: {
+      en: "Add More",
+      ja: "追加"
+    },
+
+  },
   header: {
   text_1: {
     en: "100% Private",
@@ -518,7 +525,24 @@ export const ui = {
     compress_detail: {
       en: "Compression Details",
       ja: "圧縮の詳細"
-    }
+    },
+    small_file: {
+      en: "Small File",
+      ja: "小さいファイル",
+    },
+    high_quality: {
+      en: "High Quality",
+      ja: "高品質",
+    },
+    quality_lvl: {
+      en: "Quality Level",
+      ja: "品質レベル",
+    },
+    strong_compress: {
+      en: "Strong Compress",
+      ja: "強力圧縮",
+    },
+
   },
   heic: {
     title: {

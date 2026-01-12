@@ -135,6 +135,7 @@
         hasFiles={files.length > 0}
         onClear={reset}
         accept="image/*"
+        compactLabel={ui.common.add_more[lang as Language]}
     />
 
     {#if files.length > 0}

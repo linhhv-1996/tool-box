@@ -255,32 +255,47 @@ export const categories: Category[] = [
         href: "/shrink-images",
       },
       {
-        id: "compress-video",
-        name: { 
-          en: "Compress Video Online", 
-          ja: "動画圧縮" },
-        h1: { 
-          en: "Compress Video Online with FFmpeg", 
-          ja: "動画ファイルを高速圧縮" },
-        desc: { 
-          en: "Reduce video file size using FFmpeg WASM. 100% private, multi-threaded processing.", 
-          ja: "FFmpeg WASMを使用して動画サイズを削減します。マルチスレッド処理による100%機密保持。" },
-        seo: {
-          title: { 
-            en: "Compress Video Online Free - No Server Upload", 
-            ja: "動画圧縮 (無料) | サーバー送信なしで安全にリサイズ" },
-          description: { 
-            en: "Compress MP4, WebM videos using FFmpeg.wasm. Everything stays on your computer for total privacy.", 
-            ja: "FFmpeg WASMを使用しブラウザ内で動画を圧縮. 大容量ファイルもサーバーに送らず安全に処理できます。" },
-          keywords: { 
-            en: "compress video, mp4 compressor, ffmpeg online, private video resizer", 
-            ja: "動画 圧縮, MP4 圧縮, ビデオ サイズ削減, 安全 動画 圧縮" },
-          ogTitle: { 
-            en: "Private Video Compression via FFmpeg.wasm", 
-            ja: "【安全】動画圧縮ツール - ブラウザで完結" }
-        },
-        href: "/compress-video",
-      },
+  id: "compress-video",
+  name: { 
+    en: "Compress Video Online", 
+    ja: "動画圧縮" 
+  },
+
+  h1: { 
+    en: "Compress Video Online — Fast & Private", 
+    ja: "高速・安全に動画を圧縮" 
+  },
+
+  desc: { 
+    en: "Reduce video file size instantly using our high-performance in-browser compression engine. No uploads. 100% private.", 
+    ja: "独自開発の高速圧縮エンジンで、動画サイズを即座に削減。アップロード不要・100%プライバシー保護。" 
+  },
+
+  seo: {
+    title: { 
+      en: "Compress Video Online Free — Fast, Private, No Upload", 
+      ja: "動画圧縮 無料｜高速・安全・アップロード不要" 
+    },
+
+    description: { 
+      en: "Compress MP4, WebM videos directly in your browser with our custom high-speed engine. Files never leave your device.", 
+      ja: "独自開発の高速エンジンでMP4・WebM動画をブラウザ内圧縮。ファイルは端末外に送信されません。" 
+    },
+
+    keywords: { 
+      en: "compress video online, mp4 compressor, private video compression, browser video resizer, fast video compressor", 
+      ja: "動画 圧縮, MP4 圧縮, 動画 サイズ 削減, 高速 動画 圧縮, ブラウザ 動画 圧縮" 
+    },
+
+    ogTitle: { 
+      en: "Fast & Private Video Compression — No Upload Required", 
+      ja: "高速・安全な動画圧縮｜アップロード不要" 
+    }
+  },
+
+  href: "/compress-video",
+},
+
       {
         id: "heic-to-jpg",
         name: { 

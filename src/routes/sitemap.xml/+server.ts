@@ -4,7 +4,7 @@ export const GET = async () => {
   const domain = 'https://justlocaltools.com';
   const languages = ['en', 'ja']; // 'en' là mặc định (không prefix), 'ja' là có prefix /ja
   const staticPages = ['', '/privacy', '/terms', '/how-it-works'];
-  
+
 
   const excludedToolIds = [
     'remove-background',
@@ -17,8 +17,15 @@ export const GET = async () => {
 
   const activeTools = allTools.filter(tool => !excludedToolIds.includes(tool.id));
   const toolPaths = activeTools.map(tool => tool.href);
-  
-  const basePaths = [...staticPages, ...toolPaths];
+
+  const blogFiles = import.meta.glob('../../lib/content/en/blog/*.md');
+  const blogSlugs = Object.keys(blogFiles).map((path) => {
+    return path.split('/').pop()?.replace('.md', '') || '';
+  });
+  const blogPaths = blogSlugs.map(slug => `/blog/${slug}`);
+
+
+  const basePaths = [...staticPages, ...toolPaths, ...blogPaths];
 
 
   // Hàm tạo URL chuẩn cho từng ngôn ngữ
@@ -34,12 +41,14 @@ export const GET = async () => {
       xmlns:xhtml="https://www.w3.org/1999/xhtml"
     >
       ${basePaths.map(path => {
-        // Với mỗi path, ta tạo entry cho cả 2 ngôn ngữ
-        return languages.map(lang => {
-          const loc = getUrl(path, lang);
-          const priority = path === '' ? '1.0' : (toolPaths.includes(path) ? '0.9' : '0.5');
-          
-          return `
+    // Với mỗi path, ta tạo entry cho cả 2 ngôn ngữ
+    return languages.map(lang => {
+      const loc = getUrl(path, lang);
+      const priority = path === '' ? '1.0' : 
+                          (toolPaths.includes(path) ? '0.9' : 
+                          (path.startsWith('/blog') ? '0.8' : '0.5'));
+
+      return `
             <url>
               <loc>${loc}</loc>
               <changefreq>weekly</changefreq>
@@ -57,8 +66,8 @@ export const GET = async () => {
               />
             </url>
           `;
-        }).join('');
-      }).join('')}
+    }).join('');
+  }).join('')}
     </urlset>`.trim();
 
   return new Response(sitemap, {
