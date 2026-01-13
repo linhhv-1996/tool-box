@@ -1,6 +1,9 @@
+import type { Language } from "$lib/translate/ui";
+
 // export const ssr = false;
 export const load = async ({ params }) => {
-    const lang = params.lang === 'ja' ? 'ja' : 'en';
+    // Dùng ?? '' để biến undefined thành chuỗi rỗng trước khi check .includes()
+    const lang = (['ko', 'ja'].includes(params.lang ?? '') ? params.lang : 'en') as Language;
 
     try {
         const post = await import(`../../../lib/content/${lang}/compress-pdf.md`);

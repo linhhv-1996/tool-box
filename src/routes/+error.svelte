@@ -1,9 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/state';
-  import { allTools } from '$lib/config/tools';
-
-  // Lấy ngẫu nhiên vài tool để gợi ý user quay lại
-  const suggestedTools = allTools.slice(0, 3);
 </script>
 
 <svelte:head>

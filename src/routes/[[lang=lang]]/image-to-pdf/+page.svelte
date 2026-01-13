@@ -3,26 +3,34 @@
   import { allTools } from "$lib/config/tools";
   import ToolLayout from "$lib/components/ToolLayout.svelte";
   import RelatedTools from "$lib/components/RelatedTools.svelte";
-    import { page } from "$app/stores";
-        import { ui, type Language } from "$lib/translate/ui";
-    import SEO from "$lib/components/SEO.svelte";
+  import { page } from "$app/state";
+  import { ui, type Language } from "$lib/translate/ui";
+  import SEO from "$lib/components/SEO.svelte";
+  import { SUPPORTED_LANGS, DEFAULT_LANG } from "$lib/config/constant.js";
 
   const toolInfo = allTools.find((t) => t.id === "image-to-pdf")!;
-  const related = allTools.filter((t) => t.id !== "image-to-pdf").sort(() => Math.random() - 0.5).slice(0, 5);
+  const related = allTools
+    .filter((t) => t.id !== "image-to-pdf")
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 5);
 
-  let lang = $derived($page.params.lang === 'ja' ? 'ja' : 'en');
+  let lang = $derived(
+    SUPPORTED_LANGS.includes(page.params.lang ?? "")
+      ? page.params.lang
+      : DEFAULT_LANG,
+  );
 
   let { data } = $props();
-
 </script>
 
-<SEO 
-  lang={lang} 
-  toolId="image-to-pdf"
-/>
+<SEO {lang} toolId="image-to-pdf" />
 
 <div class="max-w-[980px] mx-auto px-4 py-6 md:py-10">
-  <ToolLayout backText={ui.home.back_to_home[lang as Language]} title={toolInfo.name[lang as Language]} description={toolInfo.desc[lang as Language]} />
+  <ToolLayout
+    backText={ui.home.back_to_home[lang as Language]}
+    title={toolInfo.name[lang as Language]}
+    description={toolInfo.desc[lang as Language]}
+  />
 
   <div class="flex flex-col lg:flex-row gap-8">
     <main class="flex-1 min-w-0">
@@ -30,7 +38,7 @@
 
       <article class="prose max-w-none pt-10 border-t border-slate-100">
         {#if data.Content}
-        <data.Content />
+          <data.Content />
         {/if}
       </article>
     </main>

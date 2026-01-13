@@ -3,14 +3,19 @@
   import ToolLayout from '$lib/components/ToolLayout.svelte';
     import RelatedTools from '$lib/components/RelatedTools.svelte';
     import BulkRename from '$lib/components/tools/BulkRename.svelte';
-    import { page } from '$app/stores';
+    import { page } from '$app/state';
         import { ui, type Language } from '$lib/translate/ui.js';
     import SEO from '$lib/components/SEO.svelte';
+    import { DEFAULT_LANG, SUPPORTED_LANGS } from '$lib/config/constant.js';
 
   const toolInfo = allTools.find((t) => t.id === 'bulk-rename')!;
   const related = allTools.filter((t) => t.id !== 'bulk-rename').sort(() => Math.random() - 0.5).slice(0, 5);
 
-  let lang = $derived($page.params.lang === 'ja' ? 'ja' : 'en');
+  let lang = $derived(
+    (SUPPORTED_LANGS.includes(page.params.lang ?? '') 
+      ? page.params.lang 
+      : DEFAULT_LANG)
+  );
 
   let { data } = $props();
 </script>

@@ -15,14 +15,28 @@
     hasFiles = false,   // Trạng thái đã có file chưa để thu gọn UI
     label = "Click to select or Drag files here", // Label lúc chưa có file
     compactLabel = "Add More" // Label nút thêm file lúc đã có file
+  }: 
+  {
+    lang: Language,
+    onfiles: (files: File[]) => void,
+    onClear?: () => void,
+    accept?: string,
+    multiple?: boolean,
+    hasFiles?: boolean,
+    label?: string,
+    compactLabel?: string
   } = $props();
 
-  function handleChange(e: any) {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      onfiles(files);
-      // Reset value để có thể chọn lại chính file đó nếu cần
-      e.target.value = '';
+  function handleChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    
+    if (target.files) {
+      const selectedFiles = Array.from(target.files) as File[];
+      
+      if (selectedFiles.length > 0) {
+        onfiles(selectedFiles);
+        target.value = ''; 
+      }
     }
   }
   
